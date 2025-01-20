@@ -1,0 +1,182 @@
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+        "Source Han Sans CN", sans-serif;
+}
+
+.main-container {
+    overflow: hidden;
+}
+
+.main-container,
+.main-container * {
+    box-sizing: border-box;
+}
+
+input,
+select,
+textarea,
+button {
+    outline: 0;
+}
+
+.main-container {
+    position: relative;
+    width: 402px;
+    height: 874px;
+    margin: 0 auto;
+    font-size: 0px;
+    background: #ffffff;
+    overflow: hidden;
+}
+.text {
+    display: block;
+    position: relative;
+    height: 39px;
+    margin: 227px 0 0 95px;
+    color: #000000;
+    font-family: Inter, var(--default-font-family);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 38.727px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 3;
+}
+.text-2 {
+    display: block;
+    position: relative;
+    height: 15px;
+    margin: 24px 0 0 61px;
+    color: #000000;
+    font-family: Inter, var(--default-font-family);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.523px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 2;
+}
+.text-3 {
+    display: block;
+    position: relative;
+    height: 19px;
+    margin: 48px 0 0 62px;
+    color: #000000;
+    font-family: Inter, var(--default-font-family);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 1;
+}
+.wrapper {
+    position: relative;
+    width: 278px;
+    height: 44px;
+    margin: 9px 0 0 62px;
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.3);
+    z-index: 5;
+    border-radius: 5px;
+}
+.text-4 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: absolute;
+    height: 18px;
+    top: 12.5px;
+    left: 11.5px;
+    color: rgba(0, 0, 0, 0.5);
+    font-family: Inter, var(--default-font-family);
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 17.548px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 8;
+}
+.text-5 {
+    display: block;
+    position: relative;
+    height: 19px;
+    margin: 29px 0 0 62px;
+    color: #000000;
+    font-family: Inter, var(--default-font-family);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 4;
+}
+.wrapper-2 {
+    position: relative;
+    width: 278px;
+    height: 44px;
+    margin: 9px 0 0 62px;
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.3);
+    z-index: 6;
+    border-radius: 7px;
+}
+.text-6 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: absolute;
+    height: 18px;
+    top: 12.5px;
+    left: 11.5px;
+    color: rgba(0, 0, 0, 0.5);
+    font-family: Inter, var(--default-font-family);
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 17.548px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 10;
+}
+.group {
+    position: relative;
+    width: 278px;
+    height: 44px;
+    margin: 42px 0 0 62px;
+    background: #000000;
+    z-index: 7;
+    border-radius: 7px;
+}
+.text-7 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: absolute;
+    height: 18px;
+    top: 13px;
+    left: 91px;
+    color: #ffffff;
+    font-family: Inter, var(--default-font-family);
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 17.548px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 9;
+}
+.text-8 {
+    display: block;
+    position: relative;
+    height: 13px;
+    margin: 22px 0 0 68px;
+    color: rgba(0, 0, 0, 0.5);
+    font-family: Inter, var(--default-font-family);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 13px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 11;
+}
