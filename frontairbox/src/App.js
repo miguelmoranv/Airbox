@@ -14,7 +14,7 @@ import '@ionic/react/css/display.css';
 import { setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './views/login';
-
+import Lotes from './views/lotes';
 
 setupIonicReact();
 function App() {
@@ -44,6 +44,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/lotes" element={<Lotes />} />
         </Routes>
       </Router>
     </div>
