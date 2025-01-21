@@ -14,6 +14,8 @@
   --ion-select-option-background-color: #ffffff; /* Color de fondo de las opciones */
   --ion-select-option-background-color-focused: #f0f0f0; /* Color de fondo de la opción enfocada */
   --ion-alert-button-ok: #fff;
+
+  --ion-color-dash: #3a3a3a;
 }
 
 body.dark {
@@ -26,6 +28,10 @@ body.dark {
   --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #333333;
   --ion-color-primary-tint: #4a4a4a;
+
+
+
+  --ion-color-dash: #e5e4e4;
 }
 
 body {

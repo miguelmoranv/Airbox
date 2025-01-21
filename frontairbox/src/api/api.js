@@ -1,42 +1,53 @@
 import axios from "axios";
 
-const API_URL = "https://airboxback.vercel.app/api/lotes";
+// Configuración de Axios
+const api = axios.create({
+  baseURL: 'http://localhost:4000/api', // Reemplaza con la URL de tu API
+  headers: {
+    'Content-Type': 'application/json', // Asegura que el contenido sea JSON
+  },
+});
 
-// Obtener todos los lotes con conteo de cajas
+// Función para obtener los lotes
 export const fetchLotes = async () => {
   try {
-    const response = await axios.get(API_URL);
-    return response.data; // Aquí ya llega con el conteo de cajas
+    const response = await api.get('/lotes');
+    return response.data; // En Axios, el cuerpo de la respuesta está en `response.data`
   } catch (error) {
-    throw new Error("Error fetching lotes");
+    console.error("Error fetching lotes:", error.response ? error.response.data : error.message);
+    throw error;
   }
 };
 
-// Crear un nuevo lote
-export const createLote = async (no_serial) => {
+// Función para crear un nuevo lote
+export const createLote = async (noSerial) => {
   try {
-    const response = await axios.post(API_URL, { no_serial });
+    const response = await api.post('/lotes', { no_serial: noSerial });
     return response.data;
   } catch (error) {
-    throw new Error("Error creating lote");
+    console.error('Error creando el lote:', error.response ? error.response.data : error.message);
+    throw error;
   }
 };
 
-// Eliminar un lote por ID
+// Función para eliminar un lote
 export const deleteLote = async (id) => {
   try {
-    await axios.delete(`${API_URL}/${id}`);
+    const response = await api.delete(`/lotes/${id}`);
+    return response.data;
   } catch (error) {
-    throw new Error("Error deleting lote");
+    console.error("Error eliminando el lote:", error.response ? error.response.data : error.message);
+    throw error;
   }
 };
 
-// Obtener un lote por ID (para cuando sea necesario)
-export const fetchLoteById = async (id) => {
+// Función para actualizar un lote
+export const updateLote = async (id, noSerial) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`);
+    const response = await api.put(`/lotes/${id}`, { no_serial: noSerial });
     return response.data;
   } catch (error) {
-    throw new Error("Error fetching lote by ID");
+    console.error("Error actualizando el lote:", error.response ? error.response.data : error.message);
+    throw error;
   }
 };
