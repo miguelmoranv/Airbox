@@ -3,10 +3,10 @@ const cors = require('cors')
 const morgan = require('morgan')
 const path = require('path')
 
-const usuarios_routes = require('./routes/usuariosRoutes')
-const lotes_routes = require('./routes/loteRoutes')
-const cajas_routes = require('./routes/cajasRoutes')
-const auxiliares_routes = require('./routes/auxiliaresRoutes')
+const usuarios_routes = require('./routes/usuariosRoutes');
+const lotes_routes = require('./routes/loteRoutes');
+const cajas_routes = require('./routes/cajasRoutes');
+const auxiliares_routes = require('./routes/auxiliaresRoutes');
 
 const app = express()
 
