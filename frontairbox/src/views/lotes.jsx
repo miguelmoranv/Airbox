@@ -21,30 +21,61 @@ import {
   IonRow,
   IonCol,
 } from "@ionic/react";
-import { logOut, add } from "ionicons/icons";
+import { logOut, add, trash } from "ionicons/icons";
+import { fetchLotes, createLote, deleteLote } from "../api/api";
 
 function Lotes() {
-  const [showModal, setShowModal] = useState(false);
-  const [newLoteName, setNewLoteName] = useState("");
   const [lotes, setLotes] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [newNoSerial, setNewNoSerial] = useState("");
   const [showToast, setShowToast] = useState(null);
+
+  useEffect(() => {
+    fetchLotesData();
+  }, []);
+
+  const fetchLotesData = async () => {
+    try {
+      const data = await fetchLotes();
+      setLotes(data);
+    } catch (error) {
+      console.error(error);
+      setShowToast({ show: true, message: "Error al cargar los lotes." });
+    }
+  };
+
+  const handleCreateLote = async () => {
+    if (!newNoSerial.trim()) {
+      setShowToast({ show: true, message: "El número de serie no puede estar vacío." });
+      return;
+    }
+
+    try {
+      const newLote = await createLote(newNoSerial);
+      setLotes([...lotes, newLote]);
+      setNewNoSerial("");
+      setShowModal(false);
+      setShowToast({ show: true, message: "¡Lote creado exitosamente!" });
+    } catch (error) {
+      console.error(error);
+      setShowToast({ show: true, message: "Error al crear el lote." });
+    }
+  };
+
+  const handleDeleteLote = async (id) => {
+    try {
+      await deleteLote(id);
+      setLotes(lotes.filter((lote) => lote._id !== id));
+      setShowToast({ show: true, message: "Lote eliminado correctamente." });
+    } catch (error) {
+      console.error(error);
+      setShowToast({ show: true, message: "Error al eliminar el lote." });
+    }
+  };
 
   const handleExit = () => {
     localStorage.removeItem("user");
     window.location.href = "/";
-  };
-
-  const handleCreateLote = () => {
-    if (!newLoteName.trim()) {
-      setShowToast({ show: true, message: "El nombre del lote no puede estar vacío." });
-      return;
-    }
-
-    const newLote = { id: Date.now(), name: newLoteName };
-    setLotes([...lotes, newLote]);
-    setNewLoteName("");
-    setShowModal(false);
-    setShowToast({ show: true, message: "¡Lote creado exitosamente!" });
   };
 
   return (
@@ -59,22 +90,26 @@ function Lotes() {
           <IonGrid>
             <IonRow>
               {lotes.map((lote) => (
-                <IonCol size="12" sizeMd="4" key={lote.id}>
+                <IonCol size="12" sizeMd="4" key={lote._id}>
                   <IonCard
-                    button
                     style={{
                       borderLeft: `5px solid #3b82f6`,
                       marginBottom: "20px",
                     }}
-                    onClick={() => console.log(`Lote: ${lote.name} clicked`)}
                   >
                     <IonCardHeader>
                       <IonCardTitle style={styles.cardTitle}>
-                        {lote.name}
+                        {lote.no_serial}
                       </IonCardTitle>
+                      <IonIcon
+                        icon={trash}
+                        color="danger"
+                        style={{ cursor: "pointer", float: "right" }}
+                        onClick={() => handleDeleteLote(lote._id)}
+                      />
                     </IonCardHeader>
                     <IonCardContent>
-                      {/* Agrega aquí contenido adicional para el lote */}
+                      {/* Aquí puedes agregar más información del lote */}
                       Detalles del lote
                     </IonCardContent>
                   </IonCard>
@@ -98,10 +133,10 @@ function Lotes() {
             <h2 style={styles.modalTitle}>Crear Lote</h2>
             <IonList>
               <IonItem>
-                <IonLabel position="floating">Nombre del Lote</IonLabel>
+                <IonLabel position="floating" style={{marginBottom:'10px'}}>Número de Serie</IonLabel>
                 <IonInput
-                  value={newLoteName}
-                  onIonInput={(e) => setNewLoteName(e.target.value)}
+                  value={newNoSerial}
+                  onIonInput={(e) => setNewNoSerial(e.target.value)}
                 />
               </IonItem>
             </IonList>

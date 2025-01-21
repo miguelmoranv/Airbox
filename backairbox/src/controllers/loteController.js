@@ -1,42 +1,60 @@
 const { Connect } = require('../db');
 
-// Obtener todos los lotes
+// Obtener todos los lotes con conteo de cajas
 exports.getLotes = async (req, res) => {
-    try {
-      const connection = await Connect();
-  
-      const [rows] = await connection.query(
-        `SELECT id_lote, no_serial FROM lote`
-      );
-  
-      res.status(200).json(rows);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error al obtener lotes" });
+  try {
+    const connection = await Connect();
+
+    const [rows] = await connection.query(
+      `
+      SELECT 
+        lote.id_lote, 
+        lote.no_serial, 
+        COUNT(cajas.id_caja) AS total_cajas
+      FROM lote
+      LEFT JOIN cajas ON lote.id_lote = cajas.fg_lote
+      GROUP BY lote.id_lote, lote.no_serial
+      `
+    );
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener lotes" });
+  }
+};
+
+// Obtener un lote por ID con conteo de cajas
+exports.getLoteById = async (req, res) => {
+  try {
+    const connection = await Connect();
+    const { id } = req.params;
+
+    const [rows] = await connection.query(
+      `
+      SELECT 
+        lote.id_lote, 
+        lote.no_serial, 
+        COUNT(cajas.id_caja) AS total_cajas
+      FROM lote
+      LEFT JOIN cajas ON lote.id_lote = cajas.fg_lote
+      WHERE lote.id_lote = ?
+      GROUP BY lote.id_lote, lote.no_serial
+      `,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Lote no encontrado" });
     }
-  };
-  
-  // Obtener un lote por ID
-  exports.getLoteById = async (req, res) => {
-    try {
-      const connection = await Connect();
-      const { id } = req.params;
-  
-      const [rows] = await connection.query(
-        `SELECT id_lote, no_serial FROM lote WHERE id_lote = ?`,
-        [id]
-      );
-  
-      if (rows.length === 0) {
-        return res.status(404).json({ message: "Lote no encontrado" });
-      }
-  
-      res.status(200).json(rows[0]);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error al obtener el lote" });
-    }
-  };
+
+    res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el lote" });
+  }
+};
+
   
   // Crear un nuevo lote
   exports.createLote = async (req, res) => {
