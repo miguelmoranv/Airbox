@@ -1,4 +1,4 @@
-const { Connect } = require("../db");
+const { Connect } = require('../db');
 
 // Obtener todos los lotes
 exports.getLotes = async (req, res) => {

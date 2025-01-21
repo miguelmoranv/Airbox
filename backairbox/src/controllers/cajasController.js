@@ -1,4 +1,4 @@
-const { Connect } = require('../db/db'); // Ajusta la ruta según tu estructura de archivos
+const { Connect } = require('../db'); // Ajusta la ruta según tu estructura de archivos
 
 // Obtener todas las cajas con datos de users y auxiliares
 exports.getCajas = async (req, res) => {

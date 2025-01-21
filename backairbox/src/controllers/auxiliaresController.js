@@ -1,4 +1,4 @@
-const { Connect } = require('../db/db'); // Ajusta la ruta según tu estructura
+const { Connect } = require('../db'); // Ajusta la ruta según tu estructura
 
 // Obtener todos los auxiliares
 exports.getAuxiliares = async (req, res) => {
