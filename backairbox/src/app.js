@@ -20,6 +20,6 @@ app.use('/img', express.static(path.join(__dirname, './img')))
 app.use('/api/usuarios', usuarios_routes)
 app.use('/api/lotes', lotes_routes )
 app.use('/api/cajas', cajas_routes )
-app.use('/api/auxliares', auxiliares_routes)
+app.use('/api/auxiliares', auxiliares_routes)
 
 module.exports = app

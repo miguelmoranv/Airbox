@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { IonApp } from '@ionic/react';
 import logo from './logo.svg';
 import './App.css';
 import '@ionic/react/css/core.css';
@@ -15,6 +16,7 @@ import { setupIonicReact } from '@ionic/react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './views/login';
 import Lotes from './views/lotes';
+import Cajas from './views/cajas';
 
 setupIonicReact();
 function App() {
@@ -40,14 +42,17 @@ function App() {
     document.body.classList.toggle('dark', darkMode);
   }, [darkMode]);
   return (
-    <div className="App">
+    <>
+    <IonApp >
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/lotes" element={<Lotes />} />
+          <Route path="/Lotes" element={<Lotes />} />
+          <Route path="/Cajas/:id_lote" element={<Cajas />} />
         </Routes>
       </Router>
-    </div>
+    </IonApp>
+    </>
   );
 }
 

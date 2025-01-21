@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Configuración de Axios
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api', // Reemplaza con la URL de tu API
+  baseURL: 'https://airboxback.vercel.app/api', // Reemplaza con la URL de tu API
   headers: {
     'Content-Type': 'application/json', // Asegura que el contenido sea JSON
   },

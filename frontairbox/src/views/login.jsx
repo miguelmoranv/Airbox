@@ -15,7 +15,8 @@ import {
   IonItem,
   IonPage
 } from "@ionic/react";
-import "../styles/login.css";  // Asegúrate de tener este archivo para los estilos
+import "../styles/login.css";
+import logo from "../assets/img/logo.png";
 
 const Login = () => {
   const [user, setUser] = useState("");
@@ -23,12 +24,11 @@ const Login = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
-    // Aquí puedes agregar tu lógica de autenticación.
-    // Simulación de éxito:
     setTimeout(() => {
       setLoading(false);
       setAlertMessage("Inicio de sesión exitoso");
@@ -46,10 +46,11 @@ const Login = () => {
     <IonPage>
       <IonContent className="login">
         <IonGrid>
-          <IonRow className="ion-justify-content-center">
+          <IonRow className="ion-justify-content-center" style={{marginTop:"1%"}}>
             <IonCol size="12" size-md="8" size-lg="6">
               <IonCard className="box-shadow-none">
                 <IonCardContent>
+                  <img src={logo} alt="logo" className="logo"/>
                   <div className="text">
                     <h1>Iniciar Sesión</h1>
                   </div>
@@ -60,7 +61,15 @@ const Login = () => {
                   <div className="text-3">
                     <p>Número de empleado</p>
                   </div>
-                  <div className="wrapper">
+                  <div className="wrapper" style={{border: '2px solid transparent', 
+                        borderImage: focusedField === 'user' 
+                          ? 'linear-gradient(135deg, #6a11cb, #2575fc) 1' 
+                          : 'none', 
+                        borderRadius: '10px',
+                        transition: 'border-image 0.3s ease',}}
+                    onFocus={() => setFocusedField('user')}
+                    onBlur={() => setFocusedField(null)}
+                  >
                     <IonItem>
                       <IonInput
                         required
@@ -71,14 +80,22 @@ const Login = () => {
                         type="text"
                         style={{
                           color: "var(--ion-input-text-color)",
-                        }}
+                        }}                       
                       />
                     </IonItem>
                   </div>
                   <div className="text-5">
                     <p>Contraseña</p>
                   </div>
-                  <div className="wrapper-2">
+                  <div className="wrapper-2" style={{border: '2px solid transparent', 
+                        borderImage: focusedField === 'contrasena' 
+                          ? 'linear-gradient(135deg, #6a11cb, #2575fc) 1' 
+                          : 'none', 
+                        borderRadius: '10px',
+                        transition: 'border-image 0.3s ease',}}
+                    onFocus={() => setFocusedField('contrasena')}
+                    onBlur={() => setFocusedField(null)}
+                  >
                     <IonItem>
                       <IonInput
                         required
@@ -87,7 +104,7 @@ const Login = () => {
                         placeholder="Ingrese su contraseña"
                         className="text-6"
                         style={{
-                          color: "var(--ion-input-text-color)",
+                          color: "var(--ion-input-text-color)",  
                         }}
                         type="password"
                       />

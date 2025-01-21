@@ -194,7 +194,6 @@ html, body {
     .login-card {
       width: 90%;
       padding: 15px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   
     .login-button {
@@ -290,4 +289,31 @@ html, body {
 
 .rotating-icon:hover {
   transform: rotate(180deg);
+}
+
+.board-card {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  min-height: 90%;
+  max-height: 90%;
+}
+
+.board-card:hover {
+  transform: scale(1.05);
+}
+
+.box-shadow-none {
+  box-shadow: none !important;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto;
+  width: 35%; 
+}
+
+
+.espacio {
+  margin-bottom: 10%;
 }
