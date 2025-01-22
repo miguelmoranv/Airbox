@@ -30,9 +30,10 @@ import {
   IonLoading,
   IonSpinner,
 } from "@ionic/react";
-import { add, ellipsisHorizontal, pencil, trash, closeCircle, logOut } from "ionicons/icons";
+import { add, ellipsisHorizontal, pencil, trash, closeCircle, logOut, scan } from "ionicons/icons";
 import { fetchLotes, createLote, deleteLote, updateLote } from "../api/api";
 import logo from '../assets/img/logo.png';
+import Scanner from "../components/Scanner";
 
 function Lotes() {
   const [searchText, setSearchText] = useState("");
@@ -46,6 +47,7 @@ function Lotes() {
   const [showToast, setShowToast] = useState(null);
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [currentLote, setCurrentLote] = useState(null);
+  const [showScanner, setShowScanner] = useState(false);
   const navigate = useNavigate();
   
 
@@ -165,18 +167,21 @@ function Lotes() {
   return (
     <IonPage>
       {!isLoading && (
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle style={{textAlign:'center'}}>Lotes</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <IonHeader>
+    <IonToolbar>
+      <IonTitle style={{ textAlign: 'center' }}>Lotes</IonTitle>
+  <IonFabButton slot="end" >
+        <Scanner />
+        </IonFabButton>
+    </IonToolbar>
+  </IonHeader>
       )}
       <IonContent>
       {isLoading && (
         <div style={styles.loadingOverlay}>
           <div style={styles.loadingContainer}>
             <img
-              src={logo} // Cambia la ruta a la imagen deseada
+              src={logo} 
               alt="Cargando"
               style={styles.loadingImage}
             />
@@ -191,8 +196,8 @@ function Lotes() {
             <IonSearchbar
               value={searchText}
               onIonInput={(e) => setSearchText(e.target.value)}
-              placeholder="Buscar lote..."
-              style={styles.searchbar}
+              placeholder="Buscar por Lote"
+              style={textStyles}
             />
             <IonGrid>
               <IonRow>
@@ -333,9 +338,6 @@ const styles = {
     maxWidth: "100%",
     margin: "0 auto",
     padding: "30px",
-  },
-  searchbar: {
-    marginBottom: "20px",
   },
   card: {
     borderLeft: `10px solid var(--ion-color-dash)`,

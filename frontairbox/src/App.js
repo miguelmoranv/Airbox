@@ -19,6 +19,7 @@ import Lotes from './views/lotes';
 import Cajas from './views/cajas';
 import { UserProvider } from './context/UserContext';
 import Auxiliares from './views/auxiliares';
+import ViewCajas from './views/viewCajas';
 
 setupIonicReact();
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/Lotes" element={<Lotes />} />
           <Route path="/Cajas/:id_lote/:no_serial" element={<Cajas />} />
+          <Route path="/ViewCajas/:id_cajas" element={<ViewCajas />} />
           <Route path="/Auxiliares" element={<Auxiliares />} />
         </Routes>
       </Router>

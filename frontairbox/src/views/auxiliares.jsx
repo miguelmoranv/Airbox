@@ -127,7 +127,7 @@ const Auxiliares = () => {
                 <p>No. Empleado: {auxiliar.no_empleado_auxiliar}</p>
                 <p>Fg Users: {auxiliar.fg_users}</p>
               </IonLabel>
-              <IonButton slot="end" color="primary" onClick={() => openModal(auxiliar)}>
+              <IonButton slot="end" color="dark" onClick={() => openModal(auxiliar)}>
                 <IonIcon icon={create} />
               </IonButton>
               <IonButton slot="end" color="danger" onClick={() => handleDelete(auxiliar.id_auxiliar)}>
@@ -139,7 +139,7 @@ const Auxiliares = () => {
 
         {/* Botón flotante para agregar */}
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton onClick={() => openModal()}>
+          <IonFabButton color='dark' onClick={() => openModal()}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
@@ -154,35 +154,35 @@ const Auxiliares = () => {
           <IonContent>
             <IonList>
               <IonItem>
-                <IonLabel position="floating">Nombre</IonLabel>
+                <IonLabel position="floating" style={{marginBottom:'20px'}}>Nombre</IonLabel>
                 <IonInput
                   value={nombre}
                   onIonChange={(e) => setNombre(e.detail.value)}
                 />
               </IonItem>
               <IonItem>
-                <IonLabel position="floating">Apellidos</IonLabel>
+                <IonLabel position="floating" style={{marginBottom:'20px'}}>Apellidos</IonLabel>
                 <IonInput
                   value={apellidos}
                   onIonChange={(e) => setApellidos(e.detail.value)}
                 />
               </IonItem>
               <IonItem>
-                <IonLabel position="floating">No. Empleado</IonLabel>
+                <IonLabel position="floating" style={{marginBottom:'20px'}}>No. Empleado</IonLabel>
                 <IonInput
                   value={noEmpleado}
                   onIonChange={(e) => setNoEmpleado(e.detail.value)}
                 />
               </IonItem>
               <IonItem>
-                <IonLabel position="floating">Fg Users</IonLabel>
+                <IonLabel position="floating" style={{marginBottom:'20px'}}>Fg Users</IonLabel>
                 <IonInput
                   value={fgUsers}
                   onIonChange={(e) => setFgUsers(e.detail.value)}
                 />
               </IonItem>
             </IonList>
-            <IonButton expand="full" onClick={handleSave}>
+            <IonButton expand="full" color='dark' onClick={handleSave}>
               Guardar
             </IonButton>
             <IonButton expand="full" color="light" onClick={closeModal}>

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Configuración de Axios
 const api = axios.create({
-  baseURL: 'http://localhost:4000/api', // Reemplaza con la URL de tu API
+  baseURL: 'https://airboxback.vercel.app/api', // Reemplaza con la URL de tu API
   headers: {
     'Content-Type': 'application/json', // Asegura que el contenido sea JSON
   },
@@ -177,4 +177,14 @@ export const updateAuxiliar = async (id, auxiliar) => {
 export const deleteAuxiliar = async (id) => {
   const response = await api.delete(`${'/auxiliares'}/${id}`);
   return response.data;
+};
+
+export const fetchUserById = async (id) => {
+  try {
+    const response = await api.get(`/usuarios/${id}`);
+    return response.data; // Asegúrate de que tu API devuelve un objeto con el campo "nombre"
+  } catch (error) {
+    console.error("Error al obtener el usuario:", error.response?.data || error.message);
+    throw error;
+  }
 };
