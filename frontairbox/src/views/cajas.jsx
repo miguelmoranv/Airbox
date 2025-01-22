@@ -38,9 +38,8 @@ function Cajas() {
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const { id_lote } = useParams();
-  console.log("id_lote desde useParams:", id_lote);
-  const [lote, setLote] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const { id_lote, no_serial } = useParams();
   const [newCaja, setNewCaja] = useState({
     no_parte: "",
     no_piezas: "",
@@ -63,31 +62,66 @@ function Cajas() {
       setIsLoading(true);
       try {
         const data = await fetchCajas(id_lote);
-        setCajas(data);
+        
+        // Verificar si la respuesta es un objeto y convertirlo en un array
+        if (data && !Array.isArray(data)) {
+          setCajas([data]);  // Convertir el objeto en un array de un solo elemento
+        } else if (Array.isArray(data)) {
+          setCajas(data);
+        } else {
+          console.error("La respuesta de la API no es válida:", data);
+          setCajas([]); // Asignar un array vacío si la respuesta no es válida
+        }
       } catch (error) {
         console.error("Error fetching cajas:", error);
         setShowToast({ show: true, message: "Error al cargar las cajas." });
+        setCajas([]); // Asegúrate de asignar un array vacío en caso de error
       } finally {
         setIsLoading(false);
       }
     };
     loadCajas();
-  }, []);
+  }, [id_lote]); // Dependencia de id_lote para recargar los datos  
+  
+  // Manejar selección de caja para ver los detalles
+  const handleViewCaja = (caja) => {
+    setCurrentCaja(caja);
+    setShowViewModal(true);
+  };
 
   // Crear caja
   const handleCreateCaja = async () => {
+    // Validar que el campo 'no_parte' no esté vacío
     if (!newCaja.no_parte.trim()) {
       setShowToast({ show: true, message: "Número de parte no puede estar vacío." });
       return;
     }
   
+    // Verificar que 'id_lote' sea válido
+    if (!id_lote) {
+      console.error("El ID del lote es nulo o no válido:", id_lote);
+      setShowToast({ show: true, message: "No se puede crear una caja sin un lote válido." });
+      return;
+    }
+  
     try {
-      const newCajaData = await createCaja({
+      // Preparar los datos de la caja
+      const cajaToCreate = {
         ...newCaja,
-        fg_lote: id_lote, // Asegura que se asocia al lote actual
-      });
-      setCajas((prevCajas) => [...prevCajas, newCajaData]); // Actualizar el estado
+        fg_lote: id_lote, // Asegura que el lote esté asociado correctamente
+      };
+  
+      console.log("Datos que se enviarán para crear la caja:", cajaToCreate);
+  
+      // Llamar a la función 'createCaja' con los datos preparados
+      const newCajaData = await createCaja(cajaToCreate, id_lote);
+
+  
+      // Actualizar el estado con la nueva caja creada
+      setCajas((prevCajas) => [...prevCajas, newCajaData]);
       setShowToast({ show: true, message: "Caja creada exitosamente." });
+  
+      // Cerrar el modal y reiniciar el formulario
       setShowCreateModal(false);
       setNewCaja({
         no_parte: "",
@@ -97,13 +131,13 @@ function Cajas() {
         comentarios: "",
         fg_user: "",
         fg_auxiliares: "",
-        fg_lote: id_lote,
       });
     } catch (error) {
-      console.error("Error creating caja:", error);
+      console.error("Error creando la caja:", error);
       setShowToast({ show: true, message: "Error al crear la caja." });
     }
-  };  
+  };
+  
   
 
   // Editar caja
@@ -145,7 +179,7 @@ function Cajas() {
 
   const filteredCajas = cajas.filter((caja) =>
     caja.no_parte && caja.no_parte.toLowerCase().includes(searchText.toLowerCase())
-  );
+  );  
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   
@@ -172,7 +206,7 @@ function Cajas() {
         {!isLoading && (
         <IonHeader>
             <IonToolbar>
-                <IonTitle style={{textAlign:'center'}}> {id_lote || "Cargando..."}</IonTitle>
+                <IonTitle style={{textAlign:'center'}}> {no_serial || "Cargando..."}</IonTitle>
             </IonToolbar>
         </IonHeader>
         )}
@@ -221,7 +255,6 @@ function Cajas() {
                         <IonCardContent>
                           <p>Registrado por: {caja.user_nombre} {caja.user_apellido}</p>
                           <p>Auxiliar: {caja.auxiliar_nombre} {caja.auxiliar_apellido}</p>
-                          <p>Lote: {caja.lote_no_serial}</p>
                           <p>Piezas: {caja.piezas_bien}/{caja.no_piezas}</p>
                         </IonCardContent>
                         </IonCard>
@@ -300,6 +333,50 @@ function Cajas() {
             </IonContent>
             </IonModal>
 
+        {/* Modal para ver los detalles de la caja */}
+        <IonModal isOpen={showViewModal} onDidDismiss={() => setShowViewModal(false)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Detalles de Caja</IonTitle>
+              <IonButton slot="end" onClick={() => setShowViewModal(false)}>Cerrar</IonButton>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            {currentCaja && (
+              <IonList>
+                <IonItem>
+                  <IonLabel position="floating">Número de Parte</IonLabel>
+                  <IonInput value={currentCaja.no_parte} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">No. Piezas</IonLabel>
+                  <IonInput value={currentCaja.no_piezas} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Piezas Malas</IonLabel>
+                  <IonInput value={currentCaja.piezas_mal} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Piezas Buenas</IonLabel>
+                  <IonInput value={currentCaja.piezas_bien} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Comentarios</IonLabel>
+                  <IonInput value={currentCaja.comentarios} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Usuario Responsable</IonLabel>
+                  <IonInput value={currentCaja.fg_user} readOnly />
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="floating">Auxiliar Responsable</IonLabel>
+                  <IonInput value={currentCaja.fg_auxiliares} readOnly />
+                </IonItem>
+              </IonList>
+            )}
+          </IonContent>
+        </IonModal>
+
 
         {/* Acción rápida */}
         <IonActionSheet
@@ -324,11 +401,13 @@ function Cajas() {
           ]}
         />
 
+        {!isLoading && (
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => setShowCreateModal(true)}>
             <IonIcon icon={add} />
           </IonFabButton>
         </IonFab>
+        )}
 
         <IonToast
           isOpen={!!showToast}

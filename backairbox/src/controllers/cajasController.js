@@ -112,7 +112,6 @@ exports.getCajaById = async (req, res) => {
           auxiliares.apellidos_auxiliar AS auxiliar_apellido, 
           auxiliares.no_empleado_auxiliar AS auxiliar_no_empleado,
           lote.no_serial AS lote_no_serial
-          lote.id_lote AS id_lote
         FROM cajas
         LEFT JOIN users ON cajas.fg_user = users.id_user
         LEFT JOIN auxiliares ON cajas.fg_auxiliares = auxiliares.id_auxiliar

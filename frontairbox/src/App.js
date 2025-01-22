@@ -51,7 +51,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Lotes" element={<Lotes />} />
-          <Route path="/Cajas/:id_lote" element={<Cajas />} />
+          <Route path="/Cajas/:id_lote/:no_serial" element={<Cajas />} />
           <Route path="/Auxiliares" element={<Auxiliares />} />
         </Routes>
       </Router>

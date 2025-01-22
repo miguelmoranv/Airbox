@@ -198,7 +198,7 @@ function Lotes() {
               <IonRow>
                 {filteredLotes.map((lote) => (
                   <IonCol size="12" sizeMd="4" key={lote.id_lote}>
-                    <IonCard style={styles.card} className="board-card" onClick={() => navigate(`/Cajas/${lote.id_lote}`)}>
+                    <IonCard style={styles.card} className="board-card" onClick={() => navigate(`/Cajas/${lote.id_lote}/${lote.no_serial}`)}>
                       <IonCardHeader>
                         <IonCardTitle style={textStyles}>{lote.no_serial}</IonCardTitle>
                         <IonIcon
