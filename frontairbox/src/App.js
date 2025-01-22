@@ -17,6 +17,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './views/login';
 import Lotes from './views/lotes';
 import Cajas from './views/cajas';
+import { UserProvider } from './context/UserContext';
+import Auxiliares from './views/auxiliares';
 
 setupIonicReact();
 function App() {
@@ -43,15 +45,18 @@ function App() {
   }, [darkMode]);
   return (
     <>
+    <UserProvider>
     <IonApp >
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Lotes" element={<Lotes />} />
           <Route path="/Cajas/:id_lote" element={<Cajas />} />
+          <Route path="/Auxiliares" element={<Auxiliares />} />
         </Routes>
       </Router>
     </IonApp>
+    </UserProvider>
     </>
   );
 }

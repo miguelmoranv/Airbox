@@ -16,7 +16,10 @@ import {
   IonPage
 } from "@ionic/react";
 import "../styles/login.css";
+import { useUser } from '../context/UserContext';
+import { login as apiLogin } from '../api/api';
 import logo from "../assets/img/logo.png";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [user, setUser] = useState("");
@@ -26,6 +29,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
+  const { login } = useUser(); // Obtén la función login del contexto
+  const navigate = useNavigate(); // Para redirigir después del login
+
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -33,6 +39,7 @@ const Login = () => {
       setLoading(false);
       setAlertMessage("Inicio de sesión exitoso");
       setShowAlert(true);
+      navigate('/Lotes')
     }, 2000);
   };
 

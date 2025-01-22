@@ -9,4 +9,5 @@ router.post('/', cajasController.createCaja); // Crear una nueva caja
 router.put('/:id', cajasController.updateCaja); // Actualizar una caja por ID
 router.delete('/:id', cajasController.deleteCaja); // Eliminar una caja por ID
 
+router.get('/lote/:id', cajasController.getCajaByLote )
 module.exports = router;
