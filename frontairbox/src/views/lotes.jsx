@@ -46,7 +46,6 @@ function Lotes() {
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [currentLote, setCurrentLote] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showScanner, setShowScanner] = useState(false);
   const [lotesPerPage, setLotesPerPage] = useState(9);
   const navigate = useNavigate();
   
