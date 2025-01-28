@@ -25,12 +25,10 @@ import {
   IonToast,
   IonActionSheet,
   IonSearchbar,
-  IonAlert,
   IonButtons,
-  IonLoading,
   IonSpinner,
 } from "@ionic/react";
-import { add, ellipsisHorizontal, pencil, trash, closeCircle, logOut, scan } from "ionicons/icons";
+import { add, ellipsisHorizontal, pencil, trash, closeCircle, logOut, chevronForwardOutline, chevronBackOutline } from "ionicons/icons";
 import { fetchLotes, createLote, deleteLote, updateLote } from "../api/api";
 import logo from '../assets/img/logo.png';
 import Scanner from "../components/Scanner";
@@ -47,7 +45,9 @@ function Lotes() {
   const [showToast, setShowToast] = useState(null);
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [currentLote, setCurrentLote] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [showScanner, setShowScanner] = useState(false);
+  const [lotesPerPage, setLotesPerPage] = useState(9);
   const navigate = useNavigate();
   
 
@@ -61,8 +61,7 @@ function Lotes() {
       } catch (error) {
         console.error("Error fetching lotes:", error);
         setShowToast({ show: true, message: "Error fetching lotes." });
-      } 
-      finally {
+      } finally {
         setIsLoading(false);
       }
     };
@@ -164,6 +163,33 @@ function Lotes() {
     color: isDarkTheme ? "#e0e0e0" : "#000000",
   };
 
+  useEffect(() => {
+    const updateLotesPerPage = () => {
+      if (window.innerWidth <= 768) { // En dispositivos móviles
+        setLotesPerPage(4);
+      } else { // En PC
+        setLotesPerPage(9);
+      }
+    };
+
+    updateLotesPerPage();
+    window.addEventListener("resize", updateLotesPerPage);
+
+    return () => {
+      window.removeEventListener("resize", updateLotesPerPage);
+    };
+  }, []);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastLote = currentPage * lotesPerPage;
+  const indexOfFirstLote = indexOfLastLote - lotesPerPage;
+  const currentLotes = filteredLotes.slice(indexOfFirstLote, indexOfLastLote);
+
+  const totalPages = Math.ceil(filteredLotes.length / lotesPerPage);
+
   return (
     <IonPage>
       {!isLoading && (
@@ -191,7 +217,7 @@ function Lotes() {
         </div>
       )}
 
-        {!isLoading && (
+          {!isLoading && (
           <div style={styles.container}>
             <IonSearchbar
               value={searchText}
@@ -201,7 +227,7 @@ function Lotes() {
             />
             <IonGrid>
               <IonRow>
-                {filteredLotes.map((lote) => (
+                {currentLotes.map((lote) => (
                   <IonCol size="12" sizeMd="4" key={lote.id_lote}>
                     <IonCard style={styles.card} className="board-card" onClick={() => navigate(`/Cajas/${lote.id_lote}/${lote.no_serial}`)}>
                       <IonCardHeader>
@@ -211,13 +237,12 @@ function Lotes() {
                           size="large"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setCurrentLote(lote); // Configura el lote actual al hacer clic
+                            setCurrentLote(lote);
                             setActionSheetOpen(true);
                           }}
                           className="menu-icon"
                           style={styles.menuIcon}
                         />
-
                       </IonCardHeader>
                       <IonCardContent>Total Cajas: {lote.total_cajas}</IonCardContent>
                     </IonCard>
@@ -225,6 +250,23 @@ function Lotes() {
                 ))}
               </IonRow>
             </IonGrid>
+
+            {/* Paginación */}
+            <div style={styles.pagination}>
+              <IonButton
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <IonIcon icon={chevronBackOutline} />
+              </IonButton>
+              <span style={{padding:'10px'}}> {currentPage} de {totalPages}  </span>
+              <IonButton
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <IonIcon icon={chevronForwardOutline} />
+              </IonButton>
+            </div>
           </div>
         )}
 
@@ -342,6 +384,12 @@ const styles = {
   card: {
     borderLeft: `10px solid var(--ion-color-dash)`,
     marginBottom: "20px",
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "20px",
   },
   cardTitle: {
     fontSize: "20px",
