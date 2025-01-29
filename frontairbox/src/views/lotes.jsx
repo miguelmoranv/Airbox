@@ -77,11 +77,10 @@ function Lotes() {
 
     try {
       const newLote = await createLote(newNoSerial);
-      setLotes([...lotes, newLote]);
       setNewNoSerial("");
       setShowCreateModal(false);
       setShowToast({ show: true, message: "Lote creado exitosamente!" });
-      navigate('/Lotes');
+      window.location.reload(); // Reinicia la página
     } catch (error) {
       console.error("Error creating lote:", error);
       setShowToast({ show: true, message: "Error al crear el lote." });
