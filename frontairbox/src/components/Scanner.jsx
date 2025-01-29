@@ -2,34 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { useNavigate } from 'react-router-dom';
 import {
-    IonContent,
-    IonHeader,
-    IonPage,
-    IonTitle,
-    IonToolbar,
-    IonButton,
-    IonModal,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonFab,
     IonFabButton,
     IonIcon,
-    IonToast,
-    IonActionSheet,
-    IonSearchbar,
-    IonAlert,
-    IonButtons,
-    IonLoading,
-    IonSpinner,
   } from "@ionic/react";
   import { scan } from "ionicons/icons";
 
@@ -46,10 +20,15 @@ function Scanner() {
         leerQR(); // Inicia el escaneo si los permisos son concedidos
       } else {
         setError('Permiso de cámara denegado. Habilítalo en la configuración.');
+        if (window.confirm('No es posible activar la cámara. ¿Deseas habilitar el permiso de cámara en la configuración?')) {
+          // Lógica adicional si el usuario desea habilitar los permisos
+          await BarcodeScanner.openAppSettings(); // Abre la configuración de la aplicación para habilitar permisos
+        }
       }
     } catch (err) {
       console.error('Error al solicitar permisos:', err);
       setError('Error al solicitar acceso a la cámara.');
+      alert('No es posible activar la cámara debido a un error.');
     }
   };
 
@@ -65,10 +44,10 @@ function Scanner() {
       } else {
         setError('No se detectó contenido en el código QR.');
       }
-      setScanning(false);
     } catch (err) {
       console.error('Error al escanear:', err);
-      setError('Error al iniciar el escaneo. Por favor verifica los permisos.');
+      setError('Error al escanear el código QR.');
+    } finally {
       setScanning(false);
     }
   };
