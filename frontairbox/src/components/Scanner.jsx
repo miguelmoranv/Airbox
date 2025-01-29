@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { useNavigate } from 'react-router-dom';
-import {
-    IonFabButton,
-    IonIcon,
-  } from "@ionic/react";
-  import { scan } from "ionicons/icons";
+import { IonFabButton, IonIcon, IonAlert } from '@ionic/react';
+import { scan } from 'ionicons/icons';
 
 function Scanner() {
   const [scanning, setScanning] = useState(false); // Estado para verificar si está escaneando
   const [error, setError] = useState(null); // Estado para capturar cualquier error
+  const [isCameraActive, setIsCameraActive] = useState(false); // Estado para verificar si la cámara está activa
+  const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate(); // Hook para redirección
 
   // Función para solicitar permiso para usar la cámara
@@ -20,6 +19,7 @@ function Scanner() {
         leerQR(); // Inicia el escaneo si los permisos son concedidos
       } else {
         setError('Permiso de cámara denegado. Habilítalo en la configuración.');
+        setShowAlert(true);
         if (window.confirm('No es posible activar la cámara. ¿Deseas habilitar el permiso de cámara en la configuración?')) {
           // Lógica adicional si el usuario desea habilitar los permisos
           await BarcodeScanner.openAppSettings(); // Abre la configuración de la aplicación para habilitar permisos
@@ -27,8 +27,8 @@ function Scanner() {
       }
     } catch (err) {
       console.error('Error al solicitar permisos:', err);
-      setError('Error al solicitar acceso a la cámara.');
-      alert('No es posible activar la cámara debido a un error.');
+      setError('No es posible activar la cámara debido a un error.');
+      setShowAlert(true);
     }
   };
 
@@ -36,6 +36,7 @@ function Scanner() {
   const leerQR = async () => {
     try {
       setScanning(true);
+      setIsCameraActive(true);
       await BarcodeScanner.prepare(); // Prepara la cámara para escanear
       const result = await BarcodeScanner.startScan(); // Empieza a escanear y obtiene el resultado
 
@@ -43,12 +44,15 @@ function Scanner() {
         navigate(result.content); // Redirige a la URL obtenida del código QR
       } else {
         setError('No se detectó contenido en el código QR.');
+        setShowAlert(true);
       }
     } catch (err) {
       console.error('Error al escanear:', err);
       setError('Error al escanear el código QR.');
+      setShowAlert(true);
     } finally {
       setScanning(false);
+      setIsCameraActive(false);
     }
   };
 
@@ -57,10 +61,12 @@ function Scanner() {
     try {
       await BarcodeScanner.stopScan(); // Detiene el escaneo
       setScanning(false); // Cambia el estado de escaneo a falso
+      setIsCameraActive(false);
       setError(null); // Limpia cualquier error previo
     } catch (err) {
       console.error('Error al detener el escaneo:', err);
       setError('Error al detener el escaneo.');
+      setShowAlert(true);
     }
   };
 
@@ -77,15 +83,22 @@ function Scanner() {
     <div>
 
       {/* Mostrar el botón para empezar a escanear si no estamos escaneando */}
-      {!scanning && !error && (
-         
-                    <IonFabButton color="dark" onClick={requestCameraPermission}> 
-                      <IonIcon icon={scan} />
-                    </IonFabButton>
+      {!scanning && (
+        <IonFabButton color="dark" onClick={requestCameraPermission}>
+          <IonIcon icon={scan} />
+        </IonFabButton>
       )}
 
       {/* Mostrar mensaje de error si ocurrió un problema */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && (
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={'Error'}
+          message={error}
+          buttons={['OK']}
+        />
+      )}
 
       {/* Si estamos escaneando, mostrar la cámara con el botón de cancelar */}
       {scanning && (
