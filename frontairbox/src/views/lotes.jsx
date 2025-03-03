@@ -252,6 +252,7 @@ function Lotes() {
             {/* Paginación */}
             <div style={styles.pagination}>
               <IonButton
+              color='dark'
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
               >
@@ -259,6 +260,7 @@ function Lotes() {
               </IonButton>
               <span style={{padding:'10px'}}> {currentPage} de {totalPages}  </span>
               <IonButton
+              color='dark'
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
               >
