@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import { IonFabButton, IonIcon, IonAlert } from '@ionic/react';
-import { scan } from 'ionicons/icons';
+import { scan, close } from 'ionicons/icons'; // Importa el ícono de cierre
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate para la redirección
 
 function Scanner() {
   const [scanning, setScanning] = useState(false); // Estado para verificar si está escaneando
@@ -9,6 +10,7 @@ function Scanner() {
   const [error, setError] = useState(null); // Estado para capturar cualquier error
   const [showAlert, setShowAlert] = useState(false);
   const isNative = window.capacitor; // Verifica si la aplicación se está ejecutando en un entorno nativo
+  const navigate = useNavigate(); // Hook para redirección
 
   // Función para solicitar permiso para usar la cámara
   const requestCameraPermission = async () => {
@@ -53,6 +55,7 @@ function Scanner() {
 
       if (result?.hasContent) {
         setQrResult(result.content); // Guarda el resultado del QR
+        navigateToResult(result.content); // Redirige a la URL escaneada
       } else {
         setError('No se detectó contenido en el código QR.');
         setShowAlert(true);
@@ -62,19 +65,41 @@ function Scanner() {
       setError(`Error al escanear: ${err.message}`);
       setShowAlert(true);
     } finally {
-      setScanning(false);
+      // Apagar la cámara en todos los casos
+      await stopCamera();
     }
   };
 
-  // Función para detener el escaneo y apagar la cámara
-  const cancelarEscaneo = async () => {
+  // Función para redirigir a la URL escaneada
+  const navigateToResult = async (url) => {
+    try {
+      // Verifica si la URL es válida
+      const isValidUrl = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(url);
+      if (isValidUrl) {
+        window.location.href = url; // Redirige a la URL externa
+      } else {
+        // Si no es una URL válida, redirige a una ruta interna
+        navigate(url); // Usa navigate para redirigir a una ruta interna
+      }
+    } catch (err) {
+      console.error('Error al redirigir:', err);
+      setError('Error al redirigir a la URL escaneada.');
+      setShowAlert(true);
+    } finally {
+      // Apagar la cámara en todos los casos
+      await stopCamera();
+    }
+  };
+
+  // Función para detener la cámara
+  const stopCamera = async () => {
     try {
       await BarcodeScanner.stopScan(); // Detiene el escaneo
       setScanning(false); // Cambia el estado de escaneo a falso
       setError(null); // Limpia cualquier error previo
     } catch (err) {
-      console.error('Error al detener el escaneo:', err);
-      setError('Error al detener el escaneo.');
+      console.error('Error al detener la cámara:', err);
+      setError('Error al detener la cámara.');
       setShowAlert(true);
     }
   };
@@ -83,13 +108,13 @@ function Scanner() {
   useEffect(() => {
     return () => {
       if (scanning) {
-        BarcodeScanner.stopScan(); // Detenemos el escaneo si el componente se desmonta
+        stopCamera(); // Detenemos el escaneo si el componente se desmonta
       }
     };
   }, [scanning]);
 
   return (
-    <div>
+    <div style={{ position: 'relative', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       {/* Mostrar el botón para empezar a escanear si no estamos escaneando */}
       {!scanning && (
         <IonFabButton color="dark" onClick={requestCameraPermission}>
@@ -114,7 +139,7 @@ function Scanner() {
           {/* La cámara se abrirá en pantalla completa */}
           <div
             style={{
-              position: 'absolute',
+              position: 'fixed', // Usamos fixed para cubrir toda la pantalla
               top: 0,
               left: 0,
               width: '100%',
@@ -124,23 +149,28 @@ function Scanner() {
             }}
           ></div>
 
-          {/* Botón de cancelación */}
+          {/* Botón de cancelación en la parte inferior izquierda */}
           <button
-            onClick={cancelarEscaneo}
+            onClick={stopCamera}
             style={{
-              position: 'absolute',
-              top: '20px',
-              right: '20px',
+              position: 'fixed', // Usamos fixed para posicionar el botón
+              bottom: '20px', // Posición en la parte inferior
+              left: '20px', // Posición a la izquierda
               padding: '10px',
               backgroundColor: 'red',
               color: 'white',
               border: 'none',
-              borderRadius: '5px',
+              borderRadius: '50%', // Botón circular
               cursor: 'pointer',
-              zIndex: 100,
+              zIndex: 100, // Aseguramos que el botón esté por encima de la cámara
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '50px', // Tamaño del botón
+              height: '50px', // Tamaño del botón
             }}
           >
-            Cancelar
+            <IonIcon icon={close} style={{ fontSize: '24px' }} /> {/* Ícono de cierre */}
           </button>
         </div>
       )}
