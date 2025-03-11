@@ -21,6 +21,7 @@ import { UserProvider } from './context/UserContext';
 import Auxiliares from './views/auxiliares';
 import ViewCajas from './views/viewCajas';
 import Usuarios from './views/usuarios';
+import Scanner from './components/Scanner';
 
 setupIonicReact();
 function App() {

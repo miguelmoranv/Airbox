@@ -277,6 +277,14 @@ const generateQR = async () => {
     caja.no_parte && caja.no_parte.toLowerCase().includes(searchText.toLowerCase())
   );  
 
+
+  const printQR = () => {
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`<img src="${qrImage}" alt="Código QR" style="width: 200px; height: 200px;" />`);
+  printWindow.document.close();
+  printWindow.print();
+};
+
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   
     useEffect(() => {
@@ -510,7 +518,10 @@ const generateQR = async () => {
             {qrImage && (
               <div style={{ textAlign: 'center', marginTop: '20px' }}>
                 <img src={qrImage} alt="Código QR" style={{ width: '200px', height: '200px' }} />
-              </div>
+                <IonButton expand="full" color="dark" onClick={() => printQR()}>
+                    Imprimir QR
+                </IonButton>
+                </div>
             )}
           </IonContent>
         </IonModal>
