@@ -32,16 +32,28 @@ const Login = () => {
   const { login } = useUser(); // Obtén la función login del contexto
   const navigate = useNavigate(); // Para redirigir después del login
 
-  const handleLogin = (e) => {
+  
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setAlertMessage("Inicio de sesión exitoso");
+  
+    try {
+      const response = await apiLogin({ user, contrasena });
+      if (response && response.token) { 
+        login(response.token); // Guarda el token con tu contexto
+        navigate('/Lotes');
+      } else {
+        setAlertMessage(response.message || "Credenciales incorrectas");
+        setShowAlert(true);
+      }
+    } catch (error) {
+      setAlertMessage("Error al iniciar sesión. Inténtelo de nuevo.");
       setShowAlert(true);
-      navigate('/Lotes')
-    }, 2000);
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   const handleChange = (setter) => (e) => {
     setter(e.target.value);

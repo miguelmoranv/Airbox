@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const { Connect } = require("../db");
 const saltRounds = 10;
 
-
-const JWT_SECRET = process.env.JWT_SECRET ; // Cambia esto por algo más seguro en producción
+ 
+const JWT_SECRET = process.env.JWT_SECRET ; 
 
 
 

@@ -10,13 +10,13 @@ const api = axios.create({
 
 
 // Función para manejar el inicio de sesión
-export const login = async (no_empleado_users, contrasena) => {
+export const login = async (user, contrasena) => {
   try {
     console.log('Enviando solicitud POST a /usuarios/login');
-    console.log('Datos enviados:', { no_empleado_users, contrasena });
+    console.log('Datos enviados:', { user, contrasena });
     
     const response = await api.post('/usuarios/login', {
-      no_empleado_users,
+      user,
       contrasena
     });
 
