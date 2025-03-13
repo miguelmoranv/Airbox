@@ -1,29 +1,43 @@
 import axios from "axios";
 
+const URLLOCAL = "http://localhost:4000/api";
+const URLVERCEL = "https://airboxback.vercel.app/api";
+
+const URLPRO = `${URLVERCEL}`;
+
 // Configuración de Axios
 const api = axios.create({
-  baseURL: 'https://airboxback.vercel.app/api', // Reemplaza con la URL de tu API
+  baseURL: URLPRO, // Reemplaza con la URL de tu API
   headers: {
     'Content-Type': 'application/json', // Asegura que el contenido sea JSON
   },
 });
 
+// Funcion para el inicio de sesión
+export const login = async (no_empleado_users, contrasena) => {
+  if (!no_empleado_users || !contrasena) {
+    throw new Error('Número de empleado y contraseña son requeridos');
+  }
 
-// Función para manejar el inicio de sesión
-export const login = async (user, contrasena) => {
   try {
-    console.log('Enviando solicitud POST a /usuarios/login');
-    console.log('Datos enviados:', { user, contrasena });
-    
-    const response = await api.post('/usuarios/login', {
-      user,
-      contrasena
-    });
-
-    return response.data; // Devuelve la respuesta de la API
+    console.log("Datos enviados:", { no_empleado_users, contrasena });
+    const response = await api.post('/usuarios/login', { no_empleado_users, contrasena });
+    localStorage.setItem('token', response.data.token);
+    console.log('Token guardado en localStorage:', response.data.token);
+    return response.data;
   } catch (error) {
-    console.error('Error en la solicitud:', error.response ? error.response.data : error.message);
-    throw error; // Lanza el error para ser manejado por el componente
+    console.error('Error al iniciar sesión:', error);
+
+    if (error.response) {
+      // Error de respuesta del servidor (por ejemplo, credenciales incorrectas)
+      throw new Error(error.response.data.message || 'Error en el servidor');
+    } else if (error.request) {
+      // Error de red (no se recibió respuesta)
+      throw new Error('Error de red. Por favor, verifica tu conexión a internet.');
+    } else {
+      // Otros errores
+      throw new Error('Error inesperado al iniciar sesión');
+    }
   }
 };
 
@@ -185,6 +199,61 @@ export const fetchUserById = async (id) => {
     return response.data; // Asegúrate de que tu API devuelve un objeto con el campo "nombre"
   } catch (error) {
     console.error("Error al obtener el usuario:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Obtener todos los usuarios
+export const getUsuarios = async () => {
+  try {
+    const response = await api.get('/usuarios');
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching usuarios:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// Obtener un usuario por ID
+export const getUsuarioById = async (id) => {
+  try {
+    const response = await api.get(`/usuarios/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching usuario by ID:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// Crear un nuevo usuario
+export const createUsuario = async (usuario) => {
+  try {
+    const response = await api.post('/usuarios', usuario);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating usuario:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// Actualizar un usuario por ID
+export const updateUsuario = async (id, usuario) => {
+  try {
+    const response = await api.put(`/usuarios/${id}`, usuario);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating usuario:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+// Eliminar un usuario por ID
+export const deleteUsuario = async (id) => {
+  try {
+    const response = await api.delete(`/usuarios/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting usuario:", error.response ? error.response.data : error.message);
     throw error;
   }
 };

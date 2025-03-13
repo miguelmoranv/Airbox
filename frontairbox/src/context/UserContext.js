@@ -20,7 +20,6 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
   
-
   const login = (userData) => {
     const userWithToken = {
       id_user: userData.id_user,

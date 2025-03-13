@@ -28,6 +28,7 @@ import {
   IonButtons,
   IonSpinner,
 } from "@ionic/react";
+import { Tab } from "../components/Tab"
 import { add, ellipsisHorizontal, pencil, trash, closeCircle, logOut, chevronForwardOutline, chevronBackOutline } from "ionicons/icons";
 import { fetchLotes, createLote, deleteLote, updateLote } from "../api/api";
 import logo from '../assets/img/logo.png';
@@ -329,7 +330,7 @@ function Lotes() {
           onDidDismiss={() => setShowToast(null)}
         />
         {!isLoading && (
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+        <IonFab vertical="bottom" horizontal="end" slot="fixed" style={{marginBottom:'70px'}}>
           <IonFabButton color='dark' onClick={() => setShowCreateModal(true)}>
             <IonIcon icon={add} />
           </IonFabButton>
@@ -369,7 +370,8 @@ function Lotes() {
           ]}
           cssClass={isDarkTheme ? "action-sheet-dark" : "action-sheet-light"}
         />
-        <div className="espacio"></div>
+        
+        <Tab />
       </IonContent>
     </IonPage>
   );

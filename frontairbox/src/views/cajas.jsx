@@ -31,12 +31,19 @@ import {
   IonButtons,
   IonAlert
 } from "@ionic/react";
-import { add, ellipsisHorizontal, pencil, trash, closeCircle, arrowBack } from "ionicons/icons";
+import { add, ellipsisHorizontal, pencil, trash, closeCircle, arrowBack, chevronBackOutline, chevronForwardOutline } from "ionicons/icons";
 import { fetchCajas, fetchCajaById, createCaja, updateCaja, deleteCaja, getAuxiliares, getAuxiliarByFgUser } from "../api/api"; // API ajustada para cajas
 import logo from "../assets/img/logo.png";
 import { fetchUserById, getAuxiliarById  } from "../api/api";
+import { Tab } from "../components/Tab";
+
 
 function Cajas() {
+  const { user } = useUser();
+
+
+  const fg_user_session = user?.id_user;
+  const fg_user = user?.id_user;
   const [searchText, setSearchText] = useState("");
   const [cajas, setCajas] = useState([]);
   const [responsables, setResponsables] = useState({
@@ -74,12 +81,11 @@ function Cajas() {
   const [currentCaja, setCurrentCaja] = useState(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [cajasPerPage, setCajasPerPage] = useState(6);
 
   const [qrImage, setQrImage] = useState(null); // Almacena la imagen del QR
-  const { user } = useUser();
-
-
-  const fg_user_session = user?.id_user;
+  
 
   // Función para generar el código QR
 const generateQR = async () => {
@@ -273,17 +279,43 @@ const generateQR = async () => {
     }
   };
 
-  const filteredCajas = cajas.filter((caja) =>
-    caja.no_parte && caja.no_parte.toLowerCase().includes(searchText.toLowerCase())
-  );  
-
-
   const printQR = () => {
   const printWindow = window.open('', '_blank');
   printWindow.document.write(`<img src="${qrImage}" alt="Código QR" style="width: 200px; height: 200px;" />`);
   printWindow.document.close();
   printWindow.print();
 };
+
+  //Paginación
+  const updateCajasPerPage = () => {
+    if (window.innerWidth <= 768) { 
+      setCajasPerPage(3);
+    } else { 
+      setCajasPerPage(6);
+    }
+  };
+
+  useEffect(() => {
+    updateCajasPerPage(); 
+    window.addEventListener("resize", updateCajasPerPage); 
+
+    return () => {
+      window.removeEventListener("resize", updateCajasPerPage); 
+    };
+  }, []);
+
+  const filteredCajas = cajas.filter((caja) =>
+    caja.no_parte && caja.no_parte.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const indexOfLastCaja = currentPage * cajasPerPage;
+  const indexOfFirstCaja = indexOfLastCaja - cajasPerPage;
+  const currentCajas = filteredCajas.slice(indexOfFirstCaja, indexOfLastCaja); 
+  const totalPages = Math.ceil(filteredCajas.length / cajasPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   
@@ -344,7 +376,7 @@ const generateQR = async () => {
             />
             <IonGrid>
               <IonRow>
-                {filteredCajas.map((caja) => (
+                {currentCajas.map((caja) => (
                   <IonCol size="12" sizeMd="4" key={caja.id_caja}>
                     <IonCard style={styles.card} className="board-card" onClick={() => handleViewCaja(caja)}>
                         <IonCardHeader>
@@ -371,6 +403,24 @@ const generateQR = async () => {
                 ))}
               </IonRow>
             </IonGrid>
+
+            <div style={styles.pagination}>
+              <IonButton
+                color='dark'
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <IonIcon icon={chevronBackOutline} />
+              </IonButton>
+              <span style={{ padding: '10px' }}>{currentPage} de {totalPages}</span>
+              <IonButton
+                color='dark'
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <IonIcon icon={chevronForwardOutline} />
+              </IonButton>
+            </div>
           </div>
         )}
 
@@ -620,7 +670,7 @@ const generateQR = async () => {
         />
 
         {!isLoading && (
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+        <IonFab vertical="bottom" horizontal="end" slot="fixed" style={{marginBottom:'70px'}}>
           <IonFabButton color='dark' onClick={() => setShowCreateModal(true)}>
             <IonIcon icon={add} />
           </IonFabButton>
@@ -652,55 +702,60 @@ const generateQR = async () => {
           duration={2000}
           onDidDismiss={() => setShowToast(null)}
         />
+
+        <Tab />
       </IonContent>
     </IonPage>
   );
 }
 
 const styles = {
-    container: {
-      maxWidth: "100%",
-      margin: "0 auto",
-      padding: "30px",
-    },
-    card: {
-      borderLeft: '10px solid var(--ion-color-dash)',
-      marginBottom: "20px",
-    },
-    cardTitle: {
-      fontSize: "20px",
-      fontWeight: "bold",
-    },
-    menuIcon: {
-      cursor: "pointer",
-      float: "right",
-    },
-    logoutButton: {
-      marginTop: "10px",
-    },
-    loadingOverlay: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      display: "flex",
-      alignItems: "center", // Centrado vertical
-      justifyContent: "center", // Centrado horizontal
-      zIndex: 1000,
-    },
-    loadingContainer: {
-      textAlign: "center", // Centra el contenido dentro del contenedor
-    },
-    loadingImage: {
-      width: "150px", // Ajusta el tamaño de la imagen
-      height: "150px",
-      marginBottom: "20px", // Espacio entre la imagen y el texto
-    },
-    loadingText: {
-      fontSize: "18px",
-      marginBottom: "10px",
-    },
-  };
+  container: {
+    maxWidth: "100%",
+    margin: "0 auto",
+    padding: "30px",
+  },
+  card: {
+    borderLeft: '10px solid var(--ion-color-dash)',
+    marginBottom: "20px",
+    height: "120px", 
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between", 
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "20px",
+  },
+  menuIcon: {
+    cursor: "pointer",
+    float: "right",
+  },
+  loadingOverlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  loadingContainer: {
+    textAlign: "center",
+  },
+  loadingImage: {
+    width: "150px",
+    height: "150px",
+    marginBottom: "20px",
+  },
+  loadingText: {
+    fontSize: "18px",
+    marginBottom: "10px",
+  },
+};
 
 export default Cajas;

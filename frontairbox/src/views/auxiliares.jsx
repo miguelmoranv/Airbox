@@ -24,6 +24,7 @@ import {
   deleteAuxiliar,
 } from "../api/api";
 import { useUser } from "../context/UserContext";
+import { Tab } from "../components/Tab"
 
 const Auxiliares = () => {
   const [auxiliares, setAuxiliares] = useState([]);
@@ -138,7 +139,7 @@ const Auxiliares = () => {
         </IonList>
 
         {/* Botón flotante para agregar */}
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+        <IonFab vertical="bottom" horizontal="end" slot="fixed" style={{marginBottom:'70px'}}>
           <IonFabButton color='dark' onClick={() => openModal()}>
             <IonIcon icon={add} />
           </IonFabButton>
@@ -198,6 +199,7 @@ const Auxiliares = () => {
           duration={2000}
           onDidDismiss={() => setToastMessage("")}
         />
+        <Tab />
       </IonContent>
     </IonPage>
   );
