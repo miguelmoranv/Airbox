@@ -18,6 +18,7 @@ exports.getCajas = async (req, res) => {
           cajas.fg_user, 
           cajas.fg_auxiliares, 
           cajas.fg_lote,
+          cajas.caja_serie,
           users.nombres_users AS user_nombre, 
           users.apellidos_users AS user_apellido, 
           users.no_empleado_users AS user_no_empleado,
@@ -58,6 +59,7 @@ exports.getCajaById = async (req, res) => {
           cajas.fg_user, 
           cajas.fg_auxiliares, 
           cajas.fg_lote,
+          cajas.caja_serie,
           users.nombres_users AS user_nombre, 
           users.apellidos_users AS user_apellido, 
           users.no_empleado_users AS user_no_empleado,
@@ -105,6 +107,7 @@ exports.getCajaById = async (req, res) => {
           cajas.fg_user, 
           cajas.fg_auxiliares, 
           cajas.fg_lote,
+          cajas.caja_serie,
           users.nombres_users AS user_nombre, 
           users.apellidos_users AS user_apellido, 
           users.no_empleado_users AS user_no_empleado,
@@ -141,8 +144,8 @@ exports.createCaja = async (req, res) => {
       req.body;
 
     const [result] = await connection.query(
-      `INSERT INTO cajas (no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO cajas (no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote]
     );
 
@@ -166,7 +169,7 @@ exports.updateCaja = async (req, res) => {
 
     const [result] = await connection.query(
       `UPDATE cajas
-       SET no_parte = ?, no_piezas = ?, piezas_mal = ?, piezas_bien = ?, comentarios = ?, fecha_hora = ?, fg_user = ?, fg_auxiliares = ?, fg_lote = ?
+       SET no_parte = ?, no_piezas = ?, piezas_mal = ?, piezas_bien = ?, comentarios = ?, fecha_hora = ?, fg_user = ?, fg_auxiliares = ?, fg_lote = ?, caja_serie = ?
        WHERE id_caja = ?`,
       [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, id]
     );
