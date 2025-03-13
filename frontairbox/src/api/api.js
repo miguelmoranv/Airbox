@@ -7,7 +7,7 @@ const URLPRO = `${URLVERCEL}`;
 
 // Configuración de Axios
 const api = axios.create({
-  baseURL: URLLOCAL, // Reemplaza con la URL de tu API
+  baseURL: URLPRO, // Reemplaza con la URL de tu API
   headers: {
     'Content-Type': 'application/json', // Asegura que el contenido sea JSON
   },
