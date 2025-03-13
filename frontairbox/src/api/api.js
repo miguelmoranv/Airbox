@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const URLLOCAL = "http://localhost:4000/api";
 const URLVERCEL = "https://airboxback.vercel.app/api";
@@ -12,6 +14,20 @@ const api = axios.create({
     'Content-Type': 'application/json', // Asegura que el contenido sea JSON
   },
 });
+
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['x-access-token'] = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Funcion para el inicio de sesión
 export const login = async (no_empleado_users, contrasena) => {
