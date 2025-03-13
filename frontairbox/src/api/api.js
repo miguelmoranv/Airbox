@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const URLLOCAL = "http://localhost:4000/api";
 const URLVERCEL = "https://airboxback.vercel.app/api";
 
-const URLPRO = `${URLLOCAL}`;
+const URLPRO = `${URLVERCEL}`;
 
 // Configuración de Axios
 const api = axios.create({
@@ -16,52 +16,52 @@ const api = axios.create({
 });
 
 
-export const setupInterceptors = (navigate) => {
-  // Interceptor de solicitud
-  api.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers['x-access-token'] = token; // Asegúrate de que el token se está enviando correctamente
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['x-access-token'] = token; // Asegúrate de que el token se está enviando correctamente
     }
-  );
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-  // Interceptor de respuesta
-  api.interceptors.response.use(
-    (response) => response, // Si la respuesta es exitosa, la devuelve tal cual
-    (error) => {
-      if (error.response) {
-        const status = error.response.status;
+// Interceptor de respuesta
+api.interceptors.response.use(
+  (response) => response, // Si la respuesta es exitosa, la devuelve tal cual
+  (error) => {
+    if (error.response) {
+      const status = error.response.status;
 
-        // Si es un error 403 (o 401), redirigir a la página de sesión caducada
-        if (status === 403 || status === 401) {
-          // Eliminar el token del localStorage
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          const navigate = useNavigate();
+      // Si es un error 403 (o 401), redirigir a la página de sesión caducada
+      if (status === 403) {
 
-          // Redirigir al usuario a la página de login
-          navigate('/login'); // Usar `navigate` para redirigir al login
+        // Eliminar el token del localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
 
-          // Esto también redirige al inicio de sesión
-          // window.location.href = '/sesion-caducada';
-        } else {
-          console.error('Error en el cliente:', error.response.data);
-        }
+        // Usar el hook `useNavigate()` para redirigir al usuario
+        // Aquí asumimos que `navigate` es proporcionado por el contexto de React Router
+        // Deberías obtener `navigate` de un componente que lo utilice, no directamente aquí
+        const navigate = useNavigate();
+        navigate('/'); // Redirige al usuario
+
+        // Esto también redirige al inicio de sesión
+        // window.location.href = '/sesion-caducada';
       } else {
-        // Si no hay respuesta (por ejemplo, problemas de conexión)
-        console.error('Error de red o de conexión:', error.message);
+        console.error('Error en el cliente:', error.response.data);
       }
-
-      return Promise.reject(error); // Propaga el error
+    } else {
+      // Si no hay respuesta (por ejemplo, problemas de conexión)
+      console.error('Error de red o de conexión:', error.message);
     }
-  );
-};
+
+    return Promise.reject(error); // Propaga el error
+  }
+);
 
 // Funcion para el inicio de sesión
 export const login = async (no_empleado_users, contrasena) => {

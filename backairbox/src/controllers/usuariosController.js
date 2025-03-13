@@ -207,7 +207,7 @@ exports.createUser = async (req, res) => {
           rol: user.rol,
         },
         process.env.JWT_SECRET, // Asegúrate de usar una variable de entorno
-        { expiresIn: "1m" } // Token válido por 1 año
+        { expiresIn: "1h" } // Token válido por 1 año
       );
   
       // Enviar respuesta con el token y los datos del usuario
