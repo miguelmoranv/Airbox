@@ -140,13 +140,13 @@ exports.getCajaById = async (req, res) => {
 exports.createCaja = async (req, res) => {
   try {
     const connection = await Connect();
-    const { no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote } =
+    const { no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie } =
       req.body;
 
     const [result] = await connection.query(
       `INSERT INTO cajas (no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote]
+      [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie]
     );
 
     res.status(201).json({
@@ -164,14 +164,14 @@ exports.updateCaja = async (req, res) => {
   try {
     const connection = await Connect();
     const { id } = req.params;
-    const { no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote } =
+    const { no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie } =
       req.body;
 
     const [result] = await connection.query(
       `UPDATE cajas
        SET no_parte = ?, no_piezas = ?, piezas_mal = ?, piezas_bien = ?, comentarios = ?, fecha_hora = ?, fg_user = ?, fg_auxiliares = ?, fg_lote = ?, caja_serie = ?
        WHERE id_caja = ?`,
-      [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, id]
+      [no_parte, no_piezas, piezas_mal, piezas_bien, comentarios, fecha_hora, fg_user, fg_auxiliares, fg_lote, caja_serie, id]
     );
 
     if (result.affectedRows === 0) {

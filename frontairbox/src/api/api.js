@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const URLLOCAL = "http://localhost:4000/api";
 const URLVERCEL = "https://airboxback.vercel.app/api";
 
-const URLPRO = `${URLVERCEL}`;
+const URLPRO = `${URLLOCAL}`;
 
 // Configuración de Axios
 const api = axios.create({

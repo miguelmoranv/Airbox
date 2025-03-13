@@ -1,61 +1,38 @@
-import React, { useState, useEffect } from "react";
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonInput,
-  IonModal,
-  IonToast,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonSelect,
-  IonSelectOption,
-} from "@ionic/react";
-import { add, trash, create } from "ionicons/icons";
-import {
-  getUsuarios,
-  createUsuario,
-  updateUsuario,
-  deleteUsuario,
-} from "../api/api";
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { getUsuarios, createUsuario, updateUsuario, deleteUsuario } from "../api/api"
 import { Tab } from "../components/Tab"
-
+import "../styles/usuarios.css"
 
 const Usuarios = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedUsuario, setSelectedUsuario] = useState(null);
-  const [nombres, setNombres] = useState("");
-  const [apellidos, setApellidos] = useState("");
-  const [noEmpleado, setNoEmpleado] = useState("");
-  const [contrasena, setContrasena] = useState("");
-  const [rol, setRol] = useState("");
-  const [toastMessage, setToastMessage] = useState("");
+  const [usuarios, setUsuarios] = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedUsuario, setSelectedUsuario] = useState(null)
+  const [nombres, setNombres] = useState("")
+  const [apellidos, setApellidos] = useState("")
+  const [noEmpleado, setNoEmpleado] = useState("")
+  const [contrasena, setContrasena] = useState("")
+  const [rol, setRol] = useState("")
+  const [toastMessage, setToastMessage] = useState("")
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetchUsuarios();
-  }, []);
+    fetchUsuarios()
+  }, [])
 
   const fetchUsuarios = async () => {
     try {
-      const data = await getUsuarios();
-      setUsuarios(data);
+      const data = await getUsuarios()
+      setUsuarios(data)
     } catch (error) {
-      setToastMessage("Error al cargar los usuarios");
+      showToast("Error al cargar los usuarios")
     }
-  };
+  }
 
   const handleSave = async () => {
     if (!nombres || !apellidos || !noEmpleado || !contrasena || !rol) {
-      setToastMessage("Todos los campos son obligatorios");
-      return;
+      showToast("Todos los campos son obligatorios")
+      return
     }
 
     try {
@@ -67,8 +44,8 @@ const Usuarios = () => {
           no_empleado_users: noEmpleado,
           contrasena: contrasena,
           rol: rol,
-        });
-        setToastMessage("Usuario actualizado con éxito");
+        })
+        showToast("Usuario actualizado con éxito")
       } else {
         await createUsuario({
           nombres_users: nombres,
@@ -76,148 +53,223 @@ const Usuarios = () => {
           no_empleado_users: noEmpleado,
           contrasena: contrasena,
           rol: rol,
-        });
-        setToastMessage("Usuario creado con éxito");
+        })
+        showToast("Usuario creado con éxito")
       }
-      fetchUsuarios();
-      closeModal();
+      fetchUsuarios()
+      closeModal()
     } catch (error) {
-      setToastMessage("Error al guardar el usuario");
+      showToast("Error al guardar el usuario")
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     try {
-      await deleteUsuario(id);
-      setToastMessage("Usuario eliminado con éxito");
-      fetchUsuarios();
+      await deleteUsuario(id)
+      showToast("Usuario eliminado con éxito")
+      fetchUsuarios()
     } catch (error) {
-      setToastMessage("Error al eliminar el usuario");
+      showToast("Error al eliminar el usuario")
     }
-  };
+  }
 
   const openModal = (usuario = null) => {
-    setSelectedUsuario(usuario);
-    setNombres(usuario ? usuario.nombres_users : "");
-    setApellidos(usuario ? usuario.apellidos_users : "");
-    setNoEmpleado(usuario ? usuario.no_empleado_users : "");
-    setContrasena(usuario ? usuario.contrasena : "");
-    setRol(usuario ? usuario.rol : "");
-    setModalOpen(true);
-  };
+    setSelectedUsuario(usuario)
+    setNombres(usuario ? usuario.nombres_users : "")
+    setApellidos(usuario ? usuario.apellidos_users : "")
+    setNoEmpleado(usuario ? usuario.no_empleado_users : "")
+    setContrasena(usuario ? usuario.contrasena : "")
+    setRol(usuario ? usuario.rol : "")
+    setModalOpen(true)
+  }
 
   const closeModal = () => {
-    setSelectedUsuario(null);
-    setNombres("");
-    setApellidos("");
-    setNoEmpleado("");
-    setContrasena("");
-    setRol("");
-    setModalOpen(false);
-  };
+    setSelectedUsuario(null)
+    setNombres("")
+    setApellidos("")
+    setNoEmpleado("")
+    setContrasena("")
+    setRol("")
+    setModalOpen(false)
+  }
+
+  const showToast = (message) => {
+    setToastMessage(message)
+    setTimeout(() => {
+      setToastMessage("")
+    }, 2000)
+  }
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Gestión de Usuarios</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <div className="vu-page-container">
+      <header className="vu-page-header">
+        <h1 className="vu-header-title">Gestión de Usuarios</h1>
+      </header>
 
-      <IonContent>
-        <IonList>
+      <main className="vu-main-content">
+        <ul className="vu-user-list">
           {usuarios.map((usuario) => (
-            <IonItem key={usuario.id_user}>
-              <IonLabel>
-                <h2>{usuario.nombres_users} {usuario.apellidos_users}</h2>
-                <p>No. Empleado: {usuario.no_empleado_users}</p>
-                <p>Rol: {usuario.rol}</p>
-              </IonLabel>
-              <IonButton slot="end" color="dark" onClick={() => openModal(usuario)}>
-                <IonIcon icon={create} />
-              </IonButton>
-              <IonButton slot="end" color="danger" onClick={() => handleDelete(usuario.id_user)}>
-                <IonIcon icon={trash} />
-              </IonButton>
-            </IonItem>
-          ))}
-        </IonList>
-
-        <IonFab vertical="bottom" horizontal="end" slot="fixed" style={{marginBottom:'70px'}}>
-          <IonFabButton color='dark' onClick={() => openModal()}>
-            <IonIcon icon={add} />
-          </IonFabButton>
-        </IonFab>
-
-        <IonModal isOpen={modalOpen} onDidDismiss={closeModal}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>{selectedUsuario ? "Editar Usuario" : "Agregar Usuario"}</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent>
-            <IonList>
-              <IonItem>
-                <IonLabel position="floating">Nombres</IonLabel>
-                <IonInput
-                  value={nombres}
-                  onIonChange={(e) => setNombres(e.detail.value)}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Apellidos</IonLabel>
-                <IonInput
-                  value={apellidos}
-                  onIonChange={(e) => setApellidos(e.detail.value)}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">No. Empleado</IonLabel>
-                <IonInput
-                  type="number"
-                  value={noEmpleado}
-                  onIonChange={(e) => setNoEmpleado(e.detail.value)}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Contraseña</IonLabel>
-                <IonInput
-                  type="password"
-                  value={contrasena}
-                  onIonChange={(e) => setContrasena(e.detail.value)}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Rol</IonLabel>
-                <IonSelect
-                  value={rol}
-                  placeholder="Selecciona un rol"
-                  onIonChange={(e) => setRol(e.detail.value)}
+            <li key={usuario.id_user} className="vu-user-item">
+              <div className="vu-user-info">
+                <h2 className="vu-user-name">
+                  {usuario.nombres_users} {usuario.apellidos_users}
+                </h2>
+                <p className="vu-user-detail">No. Empleado: {usuario.no_empleado_users}</p>
+                <p className="vu-user-detail">Rol: {usuario.rol}</p>
+              </div>
+              <div className="vu-user-actions">
+                <button
+                  className="vu-btn vu-btn-icon vu-btn-dark"
+                  onClick={() => openModal(usuario)}
+                  aria-label="Editar usuario"
                 >
-                  <IonSelectOption value="admin">Admin</IonSelectOption>
-                  <IonSelectOption value="user">Usuario</IonSelectOption>
-                </IonSelect>
-              </IonItem>
-            </IonList>
-            <IonButton expand="full" color='dark' onClick={handleSave}>
-              Guardar
-            </IonButton>
-            <IonButton expand="full" color="light" onClick={closeModal}>
-              Cancelar
-            </IonButton>
-          </IonContent>
-        </IonModal>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button
+                  className="vu-btn vu-btn-icon vu-btn-danger"
+                  onClick={() => handleDelete(usuario.id_user)}
+                  aria-label="Eliminar usuario"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-        <IonToast
-          isOpen={!!toastMessage}
-          message={toastMessage}
-          duration={2000}
-          onDidDismiss={() => setToastMessage("")}
-        />
+        <div className="vu-fab">
+          <button className="vu-fab-button" onClick={() => openModal()} aria-label="Agregar usuario">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="vu-fab-icon"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+
+        {modalOpen && (
+          <div className="vu-modal-backdrop" onClick={closeModal}>
+            <div className="vu-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="vu-modal-header">
+                <h2 className="vu-modal-title">{selectedUsuario ? "Editar Usuario" : "Agregar Usuario"}</h2>
+              </div>
+              <div className="vu-modal-content">
+                <div className="vu-form-list">
+                  <div className="vu-form-item">
+                    <label className="vu-form-label" htmlFor="nombres">
+                      Nombres
+                    </label>
+                    <input
+                      id="nombres"
+                      className="vu-form-input"
+                      type="text"
+                      value={nombres}
+                      onChange={(e) => setNombres(e.target.value)}
+                    />
+                  </div>
+                  <div className="vu-form-item">
+                    <label className="vu-form-label" htmlFor="apellidos">
+                      Apellidos
+                    </label>
+                    <input
+                      id="apellidos"
+                      className="vu-form-input"
+                      type="text"
+                      value={apellidos}
+                      onChange={(e) => setApellidos(e.target.value)}
+                    />
+                  </div>
+                  <div className="vu-form-item">
+                    <label className="vu-form-label" htmlFor="noEmpleado">
+                      No. Empleado
+                    </label>
+                    <input
+                      id="noEmpleado"
+                      className="vu-form-input"
+                      type="number"
+                      value={noEmpleado}
+                      onChange={(e) => setNoEmpleado(e.target.value)}
+                    />
+                  </div>
+                  <div className="vu-form-item">
+                    <label className="vu-form-label" htmlFor="contrasena">
+                      Contraseña
+                    </label>
+                    <input
+                      id="contrasena"
+                      className="vu-form-input"
+                      type="password"
+                      value={contrasena}
+                      onChange={(e) => setContrasena(e.target.value)}
+                    />
+                  </div>
+                  <div className="vu-form-item">
+                    <label className="vu-form-label" htmlFor="rol">
+                      Rol
+                    </label>
+                    <select id="rol" className="vu-form-select" value={rol} onChange={(e) => setRol(e.target.value)}>
+                      <option value="" disabled>
+                        Selecciona un rol
+                      </option>
+                      <option value="admin">Admin</option>
+                      <option value="user">Usuario</option>
+                    </select>
+                  </div>
+                </div>
+                <button className="vu-btn vu-btn-dark vu-btn-full" onClick={handleSave}>
+                  Guardar
+                </button>
+                <button className="vu-btn vu-btn-light vu-btn-full" onClick={closeModal}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {toastMessage && <div className="vu-toast">{toastMessage}</div>}
         <Tab />
-      </IonContent>
-    </IonPage>
-  );
-};
+      </main>
+    </div>
+  )
+}
 
-export default Usuarios;
+export default Usuarios

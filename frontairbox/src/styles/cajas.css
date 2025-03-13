@@ -1,0 +1,240 @@
+/* Base styles */
+  
+  /* Page container */
+  .vwc-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  /* Header */
+  .vwc-page-header {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 60px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+  
+  .vwc-header-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+  }
+  
+  .vwc-back-button {
+    position: absolute;
+    left: 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .vwc-back-button:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  .vwc-back-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Main content */
+  .vwc-main-content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  
+  /* Card */
+  .vwc-data-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .vwc-card-header {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .vwc-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .vwc-card-content {
+    padding: 0;
+  }
+  
+  /* Section */
+  .vwc-data-section {
+    margin-bottom: 1px;
+  }
+  
+  .vwc-section-header {
+    background-color: #2e2e2e;
+    color: #ffffff;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .vwc-data-list {
+    list-style: none;
+  }
+  
+  .vwc-data-item {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+  }
+  
+  .vwc-data-item:last-child {
+    border-bottom: none;
+  }
+  
+  .vwc-data-item:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+  
+  .vwc-data-label {
+    font-size: 0.9rem;
+    color: #2e2e2e;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+  
+  .vwc-data-value {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+  }
+  
+  /* Loading */
+  .vwc-loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+  }
+  
+  .vwc-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #2e2e2e;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Error message */
+  .vwc-error-message {
+    background-color: rgba(220, 53, 69, 0.1); /* Using a red color for errors */
+    color: #dc3545; /* Standard red for errors */
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 1rem 0;
+    font-weight: 500;
+  }
+  
+  /* Responsive */
+  @media (min-width: 768px) {
+    .vwc-data-item {
+      flex-direction: row;
+      align-items: center;
+    }
+  
+    .vwc-data-label {
+      width: 30%;
+      margin-bottom: 0;
+      padding-right: 1rem;
+    }
+  
+    .vwc-data-value {
+      width: 70%;
+    }
+  }
+  
+  /* Dark mode adjustments */
+  body.dark .vwc-page-container {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+  }
+  
+  body.dark .vwc-page-header {
+    background-color: #3a3a3a;
+  }
+  
+  body.dark .vwc-data-card {
+    background-color: #2a2a2a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  body.dark .vwc-card-header {
+    background-color: #3a3a3a;
+  }
+  
+  body.dark .vwc-section-header {
+    background-color: #3a3a3a;
+  }
+  
+  body.dark .vwc-data-label {
+    color: #e5e4e4;
+  }
+  
+  body.dark .vwc-data-value {
+    color: #e0e0e0;
+  }
+  
+  body.dark .vwc-spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: #3a3a3a;
+  }
+  
+  body.dark .vwc-error-message {
+    background-color: rgba(220, 53, 69, 0.2);
+  }
+  
+  body.dark .vwc-data-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+  }

@@ -1,155 +1,141 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonModal,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonToast,
-  IonActionSheet,
-  IonSearchbar,
-  IonSpinner,
-  IonButtons,
-  IonAlert
-} from "@ionic/react";
-import { fetchCajaById } from '../api/api';
-import { add, ellipsisHorizontal, pencil, trash, closeCircle, arrowBack } from "ionicons/icons";
-import { IonLoading } from '@ionic/react';
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { fetchCajaById } from "../api/api"
+import { Tab } from "../components/Tab"
+import "../styles/cajas.css"
 
 function ViewCajas() {
-  const { id_cajas } = useParams();  // Obtener el id de las cajas desde los parámetros de la ruta
-  const [caja, setCaja] = useState(null);  // Estado para almacenar la caja
-  const [loading, setLoading] = useState(true);  // Estado para manejar la carga
-  const [error, setError] = useState(null);  // Estado para manejar errores
-  const navigate = useNavigate();
+  const { id_cajas } = useParams()
+  const [caja, setCaja] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const navigate = useNavigate()
 
-
-  // Fetch de los datos de la caja desde la API
   useEffect(() => {
     const fetchCaja = async () => {
       try {
-        const data = await fetchCajaById(id_cajas);  // Llamada a la API para obtener la caja
-        setCaja(data);  // Almacenar la respuesta
-        setLoading(false);  // Finalizar la carga
+        const data = await fetchCajaById(id_cajas)
+        setCaja(data)
+        setLoading(false)
       } catch (err) {
-        setError('Hubo un error al cargar la caja.');
-        setLoading(false);  // Finalizar la carga en caso de error
+        setError("Hubo un error al cargar la caja.")
+        setLoading(false)
       }
-    };
+    }
 
-    fetchCaja();
-  }, [id_cajas]);  // Ejecutar cada vez que cambie el id_cajas
+    fetchCaja()
+  }, [id_cajas])
 
   return (
-    <IonPage>
-      <IonHeader>
-            <IonToolbar>
-                  <IonFab slot="start">
-                    <IonFabButton color='dark' onClick={() => navigate(-1)}>
-                      <IonIcon icon={arrowBack} />
-                    </IonFabButton>
-                  </IonFab>
-                <IonTitle style={{textAlign:'center'}}>Datos</IonTitle>
-            </IonToolbar>
-        </IonHeader>
-      <IonContent>
-        {loading && <IonLoading isOpen={loading} message={"Cargando..."} />}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="vwc-page-container">
+      <header className="vwc-page-header">
+        <button className="vwc-back-button" onClick={() => navigate(-1)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="vwc-header-title">Detalles de la Caja</h1>
+      </header>
 
-        {/* Si los datos están disponibles, mostrar la información de la caja */}
-        {caja && (
-          <IonList>
-            <IonItem>
-              <IonLabel>
-                <h2>ID Caja</h2>
-                <p>{caja.id_caja}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>No. Parte</h2>
-                <p>{caja.no_parte}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>No. Piezas</h2>
-                <p>{caja.no_piezas}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Piezas Mal</h2>
-                <p>{caja.piezas_mal}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Piezas Bien</h2>
-                <p>{caja.piezas_bien}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Comentarios</h2>
-                <p>{caja.comentarios}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Fecha y Hora</h2>
-                <p>{new Date(caja.fecha_hora).toLocaleString()}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Nombre Usuario</h2>
-                <p>{caja.user_nombre} {caja.user_apellido}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Auxiliar</h2>
-                <p>{caja.auxiliar_nombre} {caja.auxiliar_apellido}</p>
-              </IonLabel>
-            </IonItem>
-
-            <IonItem>
-              <IonLabel>
-                <h2>Lote No. Serial</h2>
-                <p>{caja.lote_no_serial}</p>
-              </IonLabel>
-            </IonItem>
-          </IonList>
+      <main className="vwc-main-content">
+        {loading && (
+          <div className="vwc-loading-container">
+            <div className="vwc-spinner"></div>
+          </div>
         )}
-      </IonContent>
-    </IonPage>
-  );
+
+        {error && <div className="vwc-error-message">{error}</div>}
+
+        {caja && (
+          <div className="vwc-data-card">
+            <div className="vwc-card-header">
+              <h2 className="vwc-card-title">Caja #{caja.id_caja}</h2>
+            </div>
+
+            <div className="vwc-card-content">
+              <div className="vwc-data-section">
+                <div className="vwc-section-header">Información Básica</div>
+                <ul className="vwc-data-list">
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">No. Serie</div>
+                    <div className="vwc-data-value">{caja.caja_serie}</div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">No. Parte</div>
+                    <div className="vwc-data-value">{caja.no_parte}</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="vwc-data-section">
+                <div className="vwc-section-header">Conteo de Piezas</div>
+                <ul className="vwc-data-list">
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">No. Piezas</div>
+                    <div className="vwc-data-value">{caja.no_piezas}</div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Piezas Mal</div>
+                    <div className="vwc-data-value">{caja.piezas_mal}</div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Piezas Bien</div>
+                    <div className="vwc-data-value">{caja.piezas_bien}</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="vwc-data-section">
+                <div className="vwc-section-header">Detalles Adicionales</div>
+                <ul className="vwc-data-list">
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Comentarios</div>
+                    <div className="vwc-data-value">{caja.comentarios || "Sin comentarios"}</div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Fecha y Hora</div>
+                    <div className="vwc-data-value">{new Date(caja.fecha_hora).toLocaleString()}</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="vwc-data-section">
+                <div className="vwc-section-header">Personal</div>
+                <ul className="vwc-data-list">
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Nombre Usuario</div>
+                    <div className="vwc-data-value">
+                      {caja.user_nombre} {caja.user_apellido}
+                    </div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Auxiliar</div>
+                    <div className="vwc-data-value">
+                      {caja.auxiliar_nombre} {caja.auxiliar_apellido}
+                    </div>
+                  </li>
+                  <li className="vwc-data-item">
+                    <div className="vwc-data-label">Lote No. Serial</div>
+                    <div className="vwc-data-value">{caja.lote_no_serial}</div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <Tab />
+      </main>
+    </div>
+  )
 }
 
-export default ViewCajas;
+export default ViewCajas

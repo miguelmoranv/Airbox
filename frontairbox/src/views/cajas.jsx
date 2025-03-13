@@ -65,8 +65,10 @@ function Cajas() {
     comentarios: "",
     fg_user: "", 
     fg_auxiliares: "", 
-    fg_lote: id_lote, 
+    fg_lote: id_lote,
+    caja_serie: "" 
   });
+  
   const [editCaja, setEditCaja] = useState({
     no_parte: "",
     no_piezas: "",
@@ -75,7 +77,8 @@ function Cajas() {
     comentarios: "",
     fg_user: "", 
     fg_auxiliares: "", 
-  }); 
+    caja_serie: "" 
+  });
   const [showToast, setShowToast] = useState(null);
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [currentCaja, setCurrentCaja] = useState(null);
@@ -186,7 +189,7 @@ const generateQR = async () => {
 
   // Crear caja
   const handleCreateCaja = async () => {
-    // Validar que el campo 'no_parte' no esté vacío
+
     if (!newCaja.no_parte.trim()) {
       setShowToast({ show: true, message: "Número de parte no puede estar vacío." });
       return;
@@ -226,10 +229,11 @@ const generateQR = async () => {
         comentarios: "",
         fg_user: "",
         fg_auxiliares: "",
+        caja_serie: ""
       });
     } catch (error) {
       console.error("Error creando la caja:", error);
-      setShowToast({ show: true, message: "Error al crear la caja." });
+      setShowToast({ show: true, message: error.response?.data?.message});
     }
   };
   
@@ -239,7 +243,7 @@ const generateQR = async () => {
   const handleSaveEditCaja = async () => {
     try {
       await updateCaja(editCaja.id_caja, editCaja); // Llama a la API para actualizar
-      setCajas(cajas.map((caja) => (caja.id_caja === editCaja.id_caja ? editCaja : caja))); // Actualiza el estado local
+      setCajas(cajas.map((caja) => (caja.id_caja === editCaja.id_caja ? editCaja : caja))) // Actualiza el estado local
       setShowToast({ show: true, message: "Caja actualizada exitosamente." });
       setShowEditModal(false); // Cierra el modal
     } catch (error) {
@@ -446,6 +450,15 @@ const generateQR = async () => {
             />
           </IonItem>
           <IonItem>
+          <IonLabel position="floating" style={{ marginBottom: "20px" }}>
+            Serie de Caja
+          </IonLabel> 
+          <IonInput
+            value={newCaja.caja_serie}
+            onIonInput={(e) => setNewCaja({ ...newCaja, caja_serie: e.target.value })}
+          />
+        </IonItem>
+          <IonItem>
             <IonLabel position="floating" style={{ marginBottom: "20px" }}>
               No. Piezas
             </IonLabel>
@@ -535,6 +548,10 @@ const generateQR = async () => {
                   <IonInput value={currentCaja.no_parte} readOnly />
                 </IonItem>
                 <IonItem>
+                  <IonLabel position="floating" style={{ marginBottom: '20px' }}>Serie de Caja</IonLabel>
+                  <IonInput value={currentCaja.caja_serie} readOnly />
+                </IonItem>
+                <IonItem>
                   <IonLabel position="floating" style={{ marginBottom: '20px' }}>Usuario Responsable</IonLabel>
                   <IonInput value={`${currentCaja.user_nombre} ${currentCaja.user_apellido}`} readOnly />
                 </IonItem>
@@ -593,6 +610,13 @@ const generateQR = async () => {
                 <IonInput 
                   value={editCaja.no_parte} 
                   onIonInput={(e) => setEditCaja({ ...editCaja, no_parte: e.target.value })} 
+                />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="floating" style={{ marginBottom: '20px' }}>Serie de Caja</IonLabel>
+                <IonInput 
+                  value={editCaja.caja_serie} 
+                  onIonInput={(e) => setEditCaja({ ...editCaja, caja_serie: e.target.value })} 
                 />
               </IonItem>
               <IonItem>

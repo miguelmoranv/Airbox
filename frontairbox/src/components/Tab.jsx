@@ -18,7 +18,7 @@ export function Tab() {
 
   const menuItems = [
     { id: "lotes", label: "Lotes", icon: Layers, path: "/Lotes" },
-    { id: "auxiliares", label: "Auxiliares", icon: Package, path: "/Auxiliares" },
+    { id: "auxiliares", label: "Auxiliares", icon: Package, path: "/Auxiliares", adminOnly: true },
     { id: "usuarios", label: "Usuarios", icon: Users, path: "/Usuarios", adminOnly: true },
   ]
 
