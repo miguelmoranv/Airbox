@@ -25,6 +25,7 @@ import Scanner from './components/Scanner';
 import NotFound from './protected/NotFound';
 import Splash from './views/Splash';
 import ProtectedRoute from './protected/ProtectedRoute';
+import { useNavigate } from 'react-router-dom';
 
 setupIonicReact();
 function App() {
@@ -49,6 +50,7 @@ function App() {
   useEffect(() => {
     document.body.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
   return (
     <>
     <UserProvider>

@@ -10,6 +10,6 @@ router.put('/:id', verifyToken, auxiliaresController.updateAuxiliar); // Actuali
 router.delete('/:id', verifyToken, auxiliaresController.deleteAuxiliar); // Eliminar un auxiliar por ID
  
 
-router.get('/users/:fg_users', auxiliaresController.getAuxiliarByFgUser)
+router.get('/users/:fg_users', verifyToken, auxiliaresController.getAuxiliarByFgUser)
 
 module.exports = router;

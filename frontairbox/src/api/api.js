@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const URLLOCAL = "http://localhost:4000/api";
 const URLVERCEL = "https://airboxback.vercel.app/api";
 
-const URLPRO = `${URLVERCEL}`;
+const URLPRO = `${URLLOCAL}`;
 
 // Configuración de Axios
 const api = axios.create({
@@ -16,18 +16,52 @@ const api = axios.create({
 });
 
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['x-access-token'] = token;
+export const setupInterceptors = (navigate) => {
+  // Interceptor de solicitud
+  api.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers['x-access-token'] = token; // Asegúrate de que el token se está enviando correctamente
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  );
+
+  // Interceptor de respuesta
+  api.interceptors.response.use(
+    (response) => response, // Si la respuesta es exitosa, la devuelve tal cual
+    (error) => {
+      if (error.response) {
+        const status = error.response.status;
+
+        // Si es un error 403 (o 401), redirigir a la página de sesión caducada
+        if (status === 403 || status === 401) {
+          // Eliminar el token del localStorage
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          const navigate = useNavigate();
+
+          // Redirigir al usuario a la página de login
+          navigate('/login'); // Usar `navigate` para redirigir al login
+
+          // Esto también redirige al inicio de sesión
+          // window.location.href = '/sesion-caducada';
+        } else {
+          console.error('Error en el cliente:', error.response.data);
+        }
+      } else {
+        // Si no hay respuesta (por ejemplo, problemas de conexión)
+        console.error('Error de red o de conexión:', error.message);
+      }
+
+      return Promise.reject(error); // Propaga el error
+    }
+  );
+};
 
 // Funcion para el inicio de sesión
 export const login = async (no_empleado_users, contrasena) => {
