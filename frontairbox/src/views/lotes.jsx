@@ -47,7 +47,7 @@ function Lotes() {
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
   const [currentLote, setCurrentLote] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lotesPerPage, setLotesPerPage] = useState(9);
+  const [lotesPerPage, setLotesPerPage] = useState(6);
   const navigate = useNavigate();
   
 
@@ -165,9 +165,9 @@ function Lotes() {
   useEffect(() => {
     const updateLotesPerPage = () => {
       if (window.innerWidth <= 768) { // En dispositivos móviles
-        setLotesPerPage(4);
+        setLotesPerPage(3);
       } else { // En PC
-        setLotesPerPage(9);
+        setLotesPerPage(6);
       }
     };
 
