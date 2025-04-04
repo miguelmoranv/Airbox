@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { getAuxiliares, createAuxiliar, updateAuxiliar, deleteAuxiliar } from "../api/api";
+import { getAuxiliares, createAuxiliar, updateAuxiliar, deleteAuxiliar, getUsuarios } from "../api/api";
 import { Tab } from "../components/Tab";
 import "../styles/usuarios.css";
 
 const Auxiliares = () => {
   const [auxiliares, setAuxiliares] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAuxiliar, setSelectedAuxiliar] = useState(null);
   const [nombre, setNombre] = useState("");
@@ -15,6 +16,7 @@ const Auxiliares = () => {
 
   useEffect(() => {
     fetchAuxiliares();
+    fetchUsuarios(); 
   }, []);
 
   const fetchAuxiliares = async () => {
@@ -23,6 +25,15 @@ const Auxiliares = () => {
       setAuxiliares(data);
     } catch (error) {
       showToast("Error al cargar los auxiliares");
+    }
+  };
+
+  const fetchUsuarios = async () => {
+    try {
+      const data = await getUsuarios();
+      setUsuarios(data);
+    } catch (error) {
+      showToast("Error al cargar los usuarios");
     }
   };
 
@@ -178,72 +189,78 @@ const Auxiliares = () => {
         </div>
 
         {modalOpen && (
-          <div className="vu-modal-backdrop" onClick={closeModal}>
-            <div className="vu-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="vu-modal-header">
-                <h2 className="vu-modal-title">{selectedAuxiliar ? "Editar Auxiliar" : "Agregar Auxiliar"}</h2>
-              </div>
-              <div className="vu-modal-content">
-                <div className="vu-form-list">
-                  <div className="vu-form-item">
-                    <label className="vu-form-label" htmlFor="nombre">
-                      Nombre
-                    </label>
-                    <input
-                      id="nombre"
-                      className="vu-form-input"
-                      type="text"
-                      value={nombre}
-                      onChange={(e) => setNombre(e.target.value)}
-                    />
-                  </div>
-                  <div className="vu-form-item">
-                    <label className="vu-form-label" htmlFor="apellidos">
-                      Apellidos
-                    </label>
-                    <input
-                      id="apellidos"
-                      className="vu-form-input"
-                      type="text"
-                      value={apellidos}
-                      onChange={(e) => setApellidos(e.target.value)}
-                    />
-                  </div>
-                  <div className="vu-form-item">
-                    <label className="vu-form-label" htmlFor="noEmpleado">
-                      No. Empleado
-                    </label>
-                    <input
-                      id="noEmpleado"
-                      className="vu-form-input"
-                      type="number"
-                      value={noEmpleado}
-                      onChange={(e) => setNoEmpleado(e.target.value)}
-                    />
-                  </div>
-                  <div className="vu-form-item">
-                    <label className="vu-form-label" htmlFor="fgUsers">
-                      Fg Users
-                    </label>
-                    <input
-                      id="fgUsers"
-                      className="vu-form-input"
-                      type="text"
-                      value={fgUsers}
-                      onChange={(e) => setFgUsers(e.target.value)}
-                    />
-                  </div>
+        <div className="vu-modal-backdrop" onClick={closeModal}>
+          <div className="vu-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="vu-modal-header">
+              <h2 className="vu-modal-title">{selectedAuxiliar ? "Editar Auxiliar" : "Agregar Auxiliar"}</h2>
+            </div>
+            <div className="vu-modal-content">
+              <div className="vu-form-list">
+                <div className="vu-form-item">
+                  <label className="vu-form-label" htmlFor="nombre">
+                    Nombre
+                  </label>
+                  <input
+                    id="nombre"
+                    className="vu-form-input"
+                    type="text"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
                 </div>
-                <button className="vu-btn vu-btn-dark vu-btn-full" onClick={handleSave}>
-                  Guardar
-                </button>
-                <button className="vu-btn vu-btn-light vu-btn-full" onClick={closeModal}>
-                  Cancelar
-                </button>
+                <div className="vu-form-item">
+                  <label className="vu-form-label" htmlFor="apellidos">
+                    Apellidos
+                  </label>
+                  <input
+                    id="apellidos"
+                    className="vu-form-input"
+                    type="text"
+                    value={apellidos}
+                    onChange={(e) => setApellidos(e.target.value)}
+                  />
+                </div>
+                <div className="vu-form-item">
+                  <label className="vu-form-label" htmlFor="noEmpleado">
+                    No. Empleado
+                  </label>
+                  <input
+                    id="noEmpleado"
+                    className="vu-form-input"
+                    type="number"
+                    value={noEmpleado}
+                    onChange={(e) => setNoEmpleado(e.target.value)}
+                  />
+                </div>
+                <div className="vu-form-item">
+                  <label className="vu-form-label" htmlFor="fgUsers">
+                    Usuario
+                  </label>
+                  <select
+                    id="fgUsers"
+                    className="vu-form-input"
+                    value={fgUsers}
+                    onChange={(e) => setFgUsers(e.target.value)}
+                  >
+                    <option value="">Seleccione un usuario</option>
+                    {usuarios.map((usuario) => (
+                      <option key={usuario.id_users} value={usuario.id_users}>
+                        {usuario.nombre_users} {usuario.apellidos_users}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
+              <button className="vu-btn vu-btn-dark vu-btn-full" onClick={handleSave}>
+                Guardar
+              </button>
+              <button className="vu-btn vu-btn-light vu-btn-full" onClick={closeModal}>
+                Cancelar
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
         {toastMessage && <div className="vu-toast">{toastMessage}</div>}
         <Tab />
