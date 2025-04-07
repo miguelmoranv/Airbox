@@ -1,14 +1,25 @@
 const { Connect } = require('../db'); // Ajusta la ruta según tu estructura
 
 // Obtener todos los auxiliares
+// Obtener todos los auxiliares con información de usuario relacionada
 exports.getAuxiliares = async (req, res) => {
   try {
     const connection = await Connect();
 
-    const [rows] = await connection.query(
-      `SELECT id_auxiliar, nombre_auxiliar, apellidos_auxiliar, no_empleado_auxiliar, fg_users 
-       FROM auxiliares`
-    );
+    const [rows] = await connection.query(`
+      SELECT 
+        a.id_auxiliar, 
+        a.nombre_auxiliar, 
+        a.apellidos_auxiliar, 
+        a.no_empleado_auxiliar, 
+        a.fg_users,
+        u.nombres_users,
+        u.apellidos_users,
+        u.no_empleado_users
+        u.rol
+      FROM auxiliares a
+      LEFT JOIN users u ON a.fg_users = u.id_user
+    `);
 
     res.status(200).json(rows);
   } catch (error) {

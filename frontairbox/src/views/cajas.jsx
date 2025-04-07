@@ -29,7 +29,9 @@ import {
   IonSearchbar,
   IonSpinner,
   IonButtons,
-  IonAlert
+  IonAlert,
+  IonSelect,
+  IonSelectOption,
 } from "@ionic/react";
 import { add, ellipsisHorizontal, pencil, trash, closeCircle, arrowBack, chevronBackOutline, chevronForwardOutline } from "ionicons/icons";
 import { fetchCajas, fetchCajaById, createCaja, updateCaja, deleteCaja, getAuxiliares, getAuxiliarByFgUser } from "../api/api"; // API ajustada para cajas
@@ -46,6 +48,7 @@ function Cajas() {
   const fg_user = user?.id_user;
   const [searchText, setSearchText] = useState("");
   const [cajas, setCajas] = useState([]);
+  const [auxiliaresList, setAuxiliaresList] = useState([]);
   const [responsables, setResponsables] = useState({
     userName: '',
     userLastName: '',
@@ -63,7 +66,7 @@ function Cajas() {
     piezas_mal: "",
     piezas_bien: "",
     comentarios: "",
-    fg_user: "", 
+    fg_user: fg_user, 
     fg_auxiliares: "", 
     fg_lote: id_lote,
     caja_serie: "" 
@@ -122,29 +125,6 @@ const generateQR = async () => {
     }
   };
   
-        const auxiliares = async () => {
-            setIsLoading(true);
-            try {
-              const auxiliarData = await getAuxiliarByFgUser(fg_user_session);
-              
-              // Verificar si la respuesta es un objeto y convertirlo en un array
-              if (auxiliarData && !Array.isArray(auxiliarData)) {
-                setCajas([auxiliarData]);  // Convertir el objeto en un array de un solo elemento
-              } else if (Array.isArray(auxiliarData)) {
-                setCajas(auxiliarData);
-              } else {
-                console.error("La respuesta de la API no es válida:", auxiliarData);
-                setCajas([]); // Asignar un array vacío si la respuesta no es válida
-              }
-            } catch (error) {
-              console.error("Error fetching cajas:", error);
-              setShowToast({ show: true, message: "Error al cargar las cajas." });
-              setCajas([]); // Asegúrate de asignar un array vacío en caso de error
-            } finally {
-              setIsLoading(false);
-            }
-    };
-
   // Efecto para obtener los nombres cuando los IDs cambian
   useEffect(() => {
     if (newCaja.fg_user) {
@@ -179,7 +159,24 @@ const generateQR = async () => {
     loadCajas();
   }, [id_lote]); // Dependencia de id_lote para recargar los datos  
 
-  
+  useEffect(() => {
+    const loadAuxiliares = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getAuxiliarByFgUser(user?.id_user);
+        setAuxiliaresList(data); // Almacena en auxiliaresList en lugar de setCajas
+      } catch (error) {
+        console.error("Error fetching auxiliares:", error);
+        setShowToast({ show: true, message: "Error al cargar los auxiliares." });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    if (user?.id_user) {
+      loadAuxiliares();
+    }
+  }, [user?.id_user]);
   
   // Manejar selección de caja para ver los detalles
   const handleViewCaja = (caja) => {
@@ -494,13 +491,7 @@ const generateQR = async () => {
               onIonInput={(e) => setNewCaja({ ...newCaja, comentarios: e.target.value })}
             />
           </IonItem>
-          <IonItem>
-            <IonLabel position="floating">Usuario Responsable (ID)</IonLabel>
-            <IonInput
-              value={newCaja.fg_user}
-              onIonInput={(e) => setNewCaja({ ...newCaja, fg_user: e.target.value })}
-            />
-          </IonItem>
+         
           {(responsables.userName || responsables.userLastName) && (
             <IonItem lines="none">
               <IonLabel>
@@ -509,13 +500,22 @@ const generateQR = async () => {
             </IonItem>
           )}
 
-          <IonItem>
-            <IonLabel position="floating">Auxiliar Responsable (ID)</IonLabel>
-            <IonInput
-              value={newCaja.fg_auxiliares}
-              onIonInput={(e) => setNewCaja({ ...newCaja, fg_auxiliares: e.target.value })}
-            />
-          </IonItem>
+<IonItem>
+  <IonLabel position="floating">Auxiliar Responsable</IonLabel>
+  <IonSelect 
+    value={newCaja.fg_auxiliares}
+    onIonChange={(e) => setNewCaja({ ...newCaja, fg_auxiliares: e.detail.value })}
+  >
+    {auxiliaresList.map((auxiliar) => (
+      <IonSelectOption 
+        key={auxiliar.id_auxiliar} 
+        value={auxiliar.id_auxiliar}
+      >
+        {auxiliar.nombre_auxiliar} {auxiliar.apellidos_auxiliar}
+      </IonSelectOption>
+    ))}
+  </IonSelect>
+</IonItem>
           {(responsables.auxiliaryName || responsables.auxiliaryLastName) && (
             <IonItem lines="none">
               <IonLabel>
