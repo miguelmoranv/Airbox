@@ -1,44 +1,22 @@
 const { Connect } = require('../db'); // Ajusta la ruta según tu estructura
 
 // Obtener todos los auxiliares
-// Obtener todos los auxiliares con información de usuario relacionada
 exports.getAuxiliares = async (req, res) => {
   try {
     const connection = await Connect();
-    if (!connection) {
-      return res.status(500).json({ message: "Error al conectar con la base de datos" });
-    }
 
-    const [rows] = await connection.query(`
-      SELECT 
-        a.id_auxiliar, 
-        a.nombre_auxiliar, 
-        a.apellidos_auxiliar, 
-        a.no_empleado_auxiliar, 
-        a.fg_users,
-        u.user_nombre AS nombres_users,
-        u.user_apellido AS apellidos_users,
-        u.user_no_empleado AS no_empleado_users,
-        u.user_rol AS rol
-      FROM auxiliares a
-      LEFT JOIN users u ON a.fg_users = u.id_user
-    `);
-
-    connection.release(); // Importante liberar la conexión
-
-    if (!rows || rows.length === 0) {
-      return res.status(404).json({ message: "No se encontraron auxiliares" });
-    }
+    const [rows] = await connection.query(
+      `SELECT id_auxiliar, nombre_auxiliar, apellidos_auxiliar, no_empleado_auxiliar, fg_users 
+       FROM auxiliares`
+    );
 
     res.status(200).json(rows);
   } catch (error) {
-    console.error("Error detallado:", error);
-    res.status(500).json({ 
-      message: "Error al obtener los auxiliares",
-      error: error.message 
-    });
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los auxiliares" });
   }
 };
+
 // Obtener un auxiliar por ID
 exports.getAuxiliarById = async (req, res) => {
   try {
